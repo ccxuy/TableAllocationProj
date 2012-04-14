@@ -69,10 +69,10 @@ public class RibbonTester {
     public static void main(String args []) {
         Display display = new Display();
         final RibbonShell shell = new RibbonShell(display);
-        shell.setButtonImage(ImageCache.getImage("selection_recycle_24.png"));
+        shell.setButtonImage(ImageCache.getImage("desk_32x32.ico"));
         //Shell shell = new Shell(display);
         
-        shell.setText("SWT Ribbon Tester");
+        shell.setText("Table Allocation Prgram");
         shell.setSize(714, 500);
         
         Text text = new Text(shell.getShell(), SWT.TOP);
