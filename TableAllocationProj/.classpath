@@ -17,5 +17,7 @@
 	<classpathentry kind="lib" path="lib/db4o-8.0.236.16058-all-java5.jar"/>
 	<classpathentry kind="lib" path="lib/com.hexapixel.widgets.ribbon.alphatest.jar"/>
 	<classpathentry kind="lib" path="lib/com.hexapixel.widgets.ribbon.alphatest.src.jar"/>
+	<classpathentry kind="lib" path="swing2swt.jar"/>
+	<classpathentry kind="lib" path="swt-grouplayout.jar" sourcepath="swt-grouplayout.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

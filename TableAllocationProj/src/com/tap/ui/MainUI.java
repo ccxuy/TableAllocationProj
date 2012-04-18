@@ -13,15 +13,22 @@ package com.tap.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import swing2swt.layout.FlowLayout;
 
 import com.hexapixel.widgets.generic.ColorCache;
 import com.hexapixel.widgets.generic.ImageCache;
@@ -69,14 +76,27 @@ public class MainUI {
      */
     public void show() {
         Display display = new Display();
-        final RibbonShell shell = new RibbonShell(display);
+        final RibbonShell shell = new RibbonShell(display, SWT.INHERIT_FORCE);
         shell.setButtonImage(ImageCache.getImage("desk_32x32.ico"));
         //Shell shell = new Shell(display);
         
         shell.setText("Table Allocation Prgram");
         shell.setSize(800, 500);
         
-        Text text = new Text(shell.getShell(), SWT.TOP);
+        /*shell.getShell().setLayout(new FlowLayout(swing2swt.layout.FlowLayout.CENTER, 5, 5));
+        //Text text = new Text(shell.getShell(), SWT.TOP);
+        // Oder Composite
+        Composite comp = new Composite(shell.getShell(), SWT.NONE);
+        comp.setBackground(new Color(null, 255, 255, 255));
+        Image headImage = new Image(null, "image/dinner_table.png");
+        Label headImageLable = new Label(comp, 0);
+        headImageLable.setBackgroundImage(headImage);
+        headImageLable.setBounds(headImageLable.getBounds().x+7, headImageLable.getBounds().y+7, 48, 48);
+		Label l = new Label(comp, SWT.NONE);
+		l.setText("123123123");
+		l.setBounds(65, 7, 120, 60);
+		l.setBackground(new Color(null, 255,255,255));*/
+		// end Oder Composite
         
         QuickAccessShellToolbar mtb = shell.getToolbar();
         RibbonButton mtbtb1 = new RibbonButton(mtb, ImageCache.getImage("gear_ok_16.gif"), null, SWT.NONE);
@@ -84,10 +104,6 @@ public class MainUI {
         mtb.setArrowTooltip(new RibbonTooltip("No more things", ""));
         
         Menu shellMenu = shell.getBigButtonMenu();
-        MenuItem miLogin = new MenuItem(shellMenu, SWT.POP_UP);
-        miLogin.setText("Login");
-        MenuItem miLogout = new MenuItem(shellMenu, SWT.POP_UP);
-        miLogout.setText("Logout");
         MenuItem miQuit = new MenuItem(shellMenu, SWT.POP_UP);
         miQuit.setText("Quit");
         
@@ -118,12 +134,8 @@ public class MainUI {
         //ftf.setDrawEmptyTabs(false);
         // Tabs
         RibbonTab ftHome = new RibbonTab(ftf, "Home");
-        RibbonTab ftTable = new RibbonTab(ftf, "Table View");
-        RibbonTab ftOrder = new RibbonTab(ftf, "Order View");
-        RibbonTab ftBook = new RibbonTab(ftf, "Book View");
-        RibbonTab ftWatingList = new RibbonTab(ftf, "Wating List View");
-        RibbonTab ftStaffMgnt = new RibbonTab(ftf, "Staff management View");
-        RibbonTab ftHistory = new RibbonTab(ftf, "History View");
+        RibbonTab ftOrder = new RibbonTab(ftf, "Ordering");
+        RibbonTab ftTable = new RibbonTab(ftf, "Table, Staff and History");
         
         // Tooltip
         RibbonTooltip toolTip = new RibbonTooltip("Some Action Title", "This is content text that\nsplits over\nmore than one\nline\n\\b\\c255000000and \\xhas \\bdifferent \\c000000200look \\xand \\bfeel.", ImageCache.getImage("tooltip.jpg"), ImageCache.getImage("questionmark.gif"), "Press F1 for more help"); 
@@ -131,135 +143,126 @@ public class MainUI {
         // Group
 
         // toolbar group
-        RibbonGroup tbGroup = new RibbonGroup(ftHome, "Toolbar Here");
-        Text rbgTextID = new Text(tbGroup, 1);
-        rbgTextID.setText("LoginID : ");
-        rbgTextID.setVisible(true);
-        RibbonToolbar toolbar = new RibbonToolbar(tbGroup, RibbonToolbar.STYLE_BORDERED, 2);
-        RibbonToolbarGrouping rtg = new RibbonToolbarGrouping(toolbar, 1);        
-        RibbonToolbarGrouping rtg2 = new RibbonToolbarGrouping(toolbar, 1);
-        RibbonToolbarGrouping rtg3 = new RibbonToolbarGrouping(toolbar, 1);
+        //[TODO] Account UI
+        RibbonGroup tbGroup = new RibbonGroup(ftHome, "Account");
+        //Image loginImage = new Image(null, "image/loginButton.png");
+        Image userImage = new Image(null, "image/user.png");
+        //RibbonButton rbLoginBut = new RibbonButton(tbGroup, loginImage, null, RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
+        //rbLoginBut.setToolTip(new RibbonTooltip("Login", "Click here to login"));
+		RibbonButton userImg = new RibbonButton(tbGroup, userImage, null, 0);
+		userImg.setEnabled(false);
+		RibbonGroupSeparator rgsAccount = new RibbonGroupSeparator(tbGroup);
+		RibbonButtonGroup userSub = new RibbonButtonGroup(tbGroup);
+		new Text(tbGroup, SWT.BORDER);
+		RibbonButton userID = new RibbonButton(userSub, null, "ID : 0903000039", RibbonButton.STYLE_NO_DEPRESS);
+		RibbonButton userPostion = new RibbonButton(userSub, null, "Postion : Admin", RibbonButton.STYLE_NO_DEPRESS);
+		//rgsAccount.dispose();
+		/*userImg.dispose();
+		userID.dispose();
+		userPostion.dispose();*/
+		// end toolbar group
+		
+		// Login group
+        //[TODO] Login UI
+        RibbonGroup tbGroupLogin = new RibbonGroup(ftHome, "Login");
+        GridLayout glLogin = new GridLayout(1, false);
+        glLogin.marginHeight = 7;
+        glLogin.marginLeft = 170;
+        glLogin.marginRight = 0;
+        glLogin.verticalSpacing = 1;
+        glLogin.horizontalSpacing = 0;
+        glLogin.marginBottom = 7;
+        tbGroupLogin.setLayout(glLogin);
+        Image loginImage = new Image(null, "image/loginButton.png");
+        RibbonButton rbLoginBut = new RibbonButton(tbGroupLogin, loginImage, null, RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
+        rbLoginBut.setToolTip(new RibbonTooltip("Login", "Click here to login"));
+		userImg.setEnabled(false);
+		RibbonGroupSeparator rgsLogin = new RibbonGroupSeparator(tbGroupLogin);
+		RibbonButtonGroup loginSub = new RibbonButtonGroup(tbGroupLogin);
+		RibbonButton takeSpaceID = new RibbonButton(loginSub, null, "ID :                         ", RibbonButton.STYLE_NO_DEPRESS);
+		RibbonButton takeSpacePW = new RibbonButton(loginSub, null, "Password :                   ", RibbonButton.STYLE_NO_DEPRESS);
+		takeSpaceID.setEnabled(false);
+		takeSpacePW.setEnabled(false);
+		Text loginIDText = new Text(tbGroupLogin, SWT.BORDER);
+		Text loginPWText = new Text(tbGroupLogin, SWT.BORDER);
+		//loginIDText.setBounds(loginIDText.getBounds().x+120, loginIDText.getBounds().y, 0, 20);
+		//rgsAccount.dispose();
+		// end Login group
         
-        RibbonToolbarGrouping rtg4 = new RibbonToolbarGrouping(toolbar, 2);
-        
-        RibbonButton rbTb1 = new RibbonButton(rtg, ImageCache.getImage("books_16.gif"), null, RibbonButton.STYLE_ARROW_DOWN_SPLIT | RibbonButton.STYLE_TOGGLE);
-        RibbonButton rbTb2 = new RibbonButton(rtg2, ImageCache.getImage("gear_ok_16.gif"), null, SWT.NONE);
-        RibbonButton rbTb3 = new RibbonButton(rtg2, ImageCache.getImage("gantt_16.gif"), null, RibbonButton.STYLE_ARROW_DOWN);
-        RibbonButton rbTb4 = new RibbonButton(rtg3, ImageCache.getImage("gantt_16.gif"), null, RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        
-        RibbonButton rbTb5 = new RibbonButton(rtg4, ImageCache.getImage("enabled_small.gif"), null, RibbonButton.STYLE_NO_DEPRESS);
-        RibbonButton rbTb6 = new RibbonButton(rtg4, ImageCache.getImage("selection_recycle_16.gif"), null, RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        
-        rbTb4.setEnabled(false);
-        // end toolbar group
-        
-        RibbonGroup ftg = new RibbonGroup(ftHome, "Account", toolTip);
+		//Quick lunch
+		//[XXX]Quick lunch
+        RibbonGroup ftg = new RibbonGroup(ftHome, "Quick lunch", toolTip);
         // Button
-        RibbonButton rbLogin = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "Login", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        RibbonButton rbLogout = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "Logout", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
-        RibbonButton rb2 = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "I'm split\ntoggle", RibbonButton.STYLE_ARROW_DOWN_SPLIT | RibbonButton.STYLE_TOGGLE | RibbonButton.STYLE_TWO_LINE_TEXT);
-        rb2.setBottomOrRightToolTip(toolTip);
-        MenuItem test = new MenuItem(rb2.getMenu(), SWT.POP_UP);
-        test.setText("Testing a menu");
-
-        rb2.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
-                
-            }
-
-            public void widgetSelected(SelectionEvent e) {
-                final RibbonButton rb = (RibbonButton) e.data;
-                if (rb.isTopSelected()) 
-                    System.err.println("Top clicked");
-                else {
-                    System.err.println("Bottom clicked");
-                    rb.showMenu();                    
-                }
-            }            
-        });
-        // Empty group
-        RibbonGroup cb = new RibbonGroup(ftTable, "Checkboxes", toolTip);
-        RibbonButtonGroup cbg = new RibbonButtonGroup(cb);
+        RibbonButton rbNewCutomer = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "New customer", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
+        rbNewCutomer.setToolTip(new RibbonTooltip("Add new customer", "System will automatically allocate seat for the customer"));
+        //end Quick lunch
         
-        RibbonCheckbox rc = new RibbonCheckbox(cbg, "I'm checked", SWT.NONE);
-        rc.setSelected(true);
-        new RibbonCheckbox(cbg, "I'm not", SWT.NONE);
-        RibbonCheckbox rc3 = new RibbonCheckbox(cbg, "I'm disabled", SWT.NONE);
-        new RibbonCheckbox(cbg, "Also a checkbox", SWT.NONE);
-        new RibbonCheckbox(cbg, "Many, aren't we?", SWT.NONE);
-        rc3.setEnabled(false);
-        RibbonTooltip cbTip = new RibbonTooltip("Title", "Checkbox description\n\\b\\c255000000Some bold and red \\xand\nSome not!", null, ImageCache.getImage("questionmark.gif"), "Press F1 for more help");
-        rc3.setToolTip(cbTip);
-
-        rbLogin.setToolTip(toolTip);
-        //TODO: Check when a dialog opens as a result of clicking this to see if this button does not redraw for some reason or think it's still selected
-        new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "I am longer and do not depress", RibbonButton.STYLE_NO_DEPRESS);
-
-        RibbonGroup ftg2 = new RibbonGroup(ftTable, "Group 1");
-        RibbonButton rb1 = new RibbonButton(ftg2, ImageCache.getImage("olb_picture2.gif"), "Button 1", SWT.NONE);
-        //RibbonButton rb2 = new RibbonButton(ftg2, ImageCache.getImage("olb_picture3.gif"), "Button 2", SWT.NONE);
-
-        RibbonGroup ftg3 = new RibbonGroup(ftTable, "Group 2");
-        RibbonButton rb3 = new RibbonButton(ftg3, ImageCache.getImage("olb_picture4.gif"), "Button 3", SWT.NONE);
-        RibbonButton rb4 = new RibbonButton(ftg3, ImageCache.getImage("olb_picture6.gif"), "Button 4", SWT.NONE);
-        rb4.setToolTip(toolTip);
-
-        ButtonSelectGroup group = new ButtonSelectGroup();
+        //end Home tab
+              
+        //Ordering
+        //[TODO] Ordering
+        //Order group 
+        RibbonGroup rgOrder = new RibbonGroup(ftOrder, "Current");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbNewOrderView = new RibbonButton(rgOrder, ImageCache.getImage("olb_picture.gif"), "Order View", RibbonButton.STYLE_NO_DEPRESS);
+        new RibbonGroupSeparator(rgOrder);
+        RibbonButtonGroup orderSub = new RibbonButtonGroup(rgOrder);
+        RibbonButton rbNewOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "New Order", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbModifyOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "Modify Order", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "Delete Order", RibbonButton.STYLE_NO_DEPRESS);
+        //end Order group
         
-        // native controls example
-        RibbonGroup ftg4 = new RibbonGroup(ftTable, "Native");
-        GridLayout gl = new GridLayout(1, false);
-        gl.marginHeight = 7;
-        gl.marginLeft = 0;
-        gl.marginRight = 0;
-        gl.verticalSpacing = 1;
-        gl.horizontalSpacing = 0;
-        gl.marginBottom = 7;
-        ftg4.setLayout(gl);
-        Combo foo = new Combo(ftg4, SWT.READ_ONLY);
-        foo.setText("Testing");
-        foo.add("Testing 2");
-        foo.add("Testing 3");
-        foo.add("Testing 4");
-        Button b = new Button(ftg4, SWT.PUSH);
-        b.setText("Test");
-                
-        // create sub button containing 3 buttons inside it
-        new RibbonGroupSeparator(ftg);
+        //Booking group 
+        RibbonGroup rgBook = new RibbonGroup(ftOrder, "Booking");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbNewBookView = new RibbonButton(rgBook, ImageCache.getImage("olb_picture.gif"), "Booking View", RibbonButton.STYLE_NO_DEPRESS);
+        new RibbonGroupSeparator(rgBook);
+        RibbonButtonGroup bookSub = new RibbonButtonGroup(rgBook);
+        RibbonButton rbNewBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "New Book", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbModifyBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Modify Book", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Delete Book", RibbonButton.STYLE_NO_DEPRESS);
+        //end Booking group
         
-        RibbonButtonGroup sub = new RibbonButtonGroup(ftg);
-        RibbonButton sub1 = new RibbonButton(sub, ImageCache.getImage("enabled_small.gif"), ImageCache.getImage("disabled_small.gif"), "Disabled", SWT.NONE);
-        sub1.setEnabled(false);
-        new RibbonCheckbox(sub, "I'm mixed in", SWT.NONE);
-
-        // make arrow down
-        RibbonButton rb5 = new RibbonButton(sub, ImageCache.getImage("olb_small2.gif"), "I am toggle split", RibbonButton.STYLE_TOGGLE | RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        RibbonButton rb6 = new RibbonButton(sub, ImageCache.getImage("olb_small3.gif"), "I am a quite long button", SWT.NONE);
-        RibbonButton rb7 = new RibbonButton(sub, ImageCache.getImage("olb_small3.gif"), "I split normal", RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        RibbonButton rb8 = new RibbonButton(sub, ImageCache.getImage("olb_small3.gif"), "I am arrowed", RibbonButton.STYLE_ARROW_DOWN);
-
-        MenuItem test2 = new MenuItem(rb8.getMenu(), SWT.POP_UP);
-        test2.setText("Testing an arrow down menu");
-
-        rb8.addSelectionListener(new SelectionListener() {
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
-
-            public void widgetSelected(SelectionEvent e) {
-                final RibbonButton rb = (RibbonButton) e.data;
-                rb.showMenu();                    
-            }
-            
-        });
+        //Wating List group 
+        RibbonGroup rgWait = new RibbonGroup(ftOrder, "Wating List");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbNewWaitView = new RibbonButton(rgWait, ImageCache.getImage("olb_picture.gif"), "Waiting View", RibbonButton.STYLE_NO_DEPRESS);
+        new RibbonGroupSeparator(rgWait);
+        RibbonButtonGroup waitSub = new RibbonButtonGroup(rgWait);
+        RibbonButton rbNewWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "New wait guest", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbModifyWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "Modify wait guest", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "Delete wait guest", RibbonButton.STYLE_NO_DEPRESS);
+        //end Wating List group
+        //end Order tab
         
-        rb1.setButtonSelectGroup(group);
-        rb2.setButtonSelectGroup(group);
-        rb3.setButtonSelectGroup(group);
-        rb4.setButtonSelectGroup(group);
-        rb5.setButtonSelectGroup(group);
-        rb6.setButtonSelectGroup(group);
-                    
+        //Tab table
+        //Group Table Management
+        RibbonGroup rgTable = new RibbonGroup(ftTable, "Table Management");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbTableView = new RibbonButton(rgTable, ImageCache.getImage("olb_picture.gif"), "Table View", RibbonButton.STYLE_NO_DEPRESS);
+        new RibbonGroupSeparator(rgTable);
+        RibbonButtonGroup tableSub = new RibbonButtonGroup(rgTable);
+        RibbonButton rbNewTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "New Table", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbModifyTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "Modify Table", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "Delete Table", RibbonButton.STYLE_NO_DEPRESS);
+        //end Booking group
+        //Group Staff Management
+        RibbonGroup rgStaff = new RibbonGroup(ftTable, "Staff Management");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbStaffView = new RibbonButton(rgStaff, ImageCache.getImage("olb_picture.gif"), "Staff View", RibbonButton.STYLE_NO_DEPRESS);
+        new RibbonGroupSeparator(rgTable);
+        RibbonButtonGroup staffSub = new RibbonButtonGroup(rgStaff);
+        RibbonButton rbNewStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "New Staff", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbModifyStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "Modify Staff", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "Delete Staff", RibbonButton.STYLE_NO_DEPRESS);
+        //end Booking group
+        //Group Staff Management
+        RibbonGroup rgHistory = new RibbonGroup(ftTable, "History");
+        //new Image(null, "newOder.gif")
+        RibbonButton rbHistoryView = new RibbonButton(rgHistory, ImageCache.getImage("olb_picture.gif"), "History View", RibbonButton.STYLE_NO_DEPRESS);
+        //end Booking group
+        
+        
         Utils.centerDialogOnScreen(shell.getShell());
 
         shell.open();
