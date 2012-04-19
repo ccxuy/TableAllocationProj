@@ -17,6 +17,13 @@ public class Table extends Guests {
 	private int capacity;
 	
 	/*
+	 *è¿™ä¸ªconstructoræ˜¯ä¸ºäº†é¿å…åœ¨restaurant é‡Œæ²¡æœ‰ç©ºconstructorå¯ç”¨
+	 */
+	public Table(){
+		
+	}
+	
+	/*
 	 *constructor 
 	 */
 	public  Table(int capacity) {
@@ -25,8 +32,7 @@ public class Table extends Guests {
 	 
 	/*
 	 *constructor
-	 *set capacity of each table differing by table name
-	 *Èç¹ûreturn ÖµÊÇ1 ÔòÕıÈ·
+	 *
 	 */
 	public Table(String name, int capacity) {
 		this.name = name;
@@ -82,7 +88,7 @@ public class Table extends Guests {
 	}
 	 
 	/*
-	 *?? Õâ¸ö·½·¨ÊÇ¸ÉÊ²Ã´ÓÃµÄ£¿
+	 *è¿™ä¸ªæ–¹æ³•æ‹¿æ¥åšä»€ä¹ˆï¼Ÿï¼Ÿ
 	 */
 	public int setOrderList() {
 		

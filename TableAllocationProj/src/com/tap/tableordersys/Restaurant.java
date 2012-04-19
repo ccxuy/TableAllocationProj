@@ -6,16 +6,14 @@ import java.util.List;
 import com.tap.usersys.Operator;
 
 public class Restaurant extends Table {
- 
-	public Restaurant(String name, int cpacity) {
-		super(name, cpacity);
-		// TODO Auto-generated constructor stub
+		
+	public Restaurant() {
 	}
 
 	private String name;
 	 
 	private List<Table> tableList;
-	 
+	
 	public int addTable(Table t) {
 		try{
 			this.tableList.add(t);
