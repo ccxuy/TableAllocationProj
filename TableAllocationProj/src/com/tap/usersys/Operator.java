@@ -53,6 +53,12 @@ public class Operator {
 	public void setPosition(String position) {
 		this.position = position;
 	}
+
+	@Override
+	public String toString() {
+		return "Operator [id=" + id + ", password=" + password + ", position="
+				+ position + "]";
+	}
 	
 	
 	 
