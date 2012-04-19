@@ -1,7 +1,12 @@
 package com.tap.tableordersys;
 
+import com.tap.locinfo.Status;
 import com.tap.usersys.Operator;
 
+/**
+ * @author Andrew
+ *
+ */
 public class Order {
 	transient public final static int SUCCESS = 0;
 	transient public final static int FAIL = 1;
@@ -37,7 +42,7 @@ public class Order {
 		this.operator = operator;
 		this.table = table;
 		this.gusets = gusets;
-		this.state = Order.STATE_INIT;
+		this.state = Status.STATE_INIT.getValue();
 	}
 
 	
@@ -50,10 +55,10 @@ public class Order {
 	public int checkIn() {
 		if(STATE_INIT == this.state
 				||STATE_ORDERD== this.state){
-			this.state = STATE_ORDERD;
-			return SUCCESS;
+			this.state = Status.STATE_ORDERD.getValue();
+			return Status.SUCCESS.getValue();
 		}
-		return FAIL;
+		return Status.FAIL.getValue();
 	}
 	 
 	/**
@@ -63,16 +68,43 @@ public class Order {
 	 */
 	public int checkOut() {
 		if(STATE_ORDERD== this.state){
-			this.state = STATE_FINISHED;
-			return SUCCESS;
+			this.state = Status.STATE_FINISHED.getValue();
+			return Status.SUCCESS.getValue();
 		}
-		return FAIL;
+		return Status.FAIL.getValue();
 	}
-	 
-	public void addToWaitingList() {
-	 
+	
+	public int cancel(){
+		this.state = Status.STATE_CANCELED.getValue();
+		return Status.SUCCESS.getValue();
+	}
+	
+	/**
+	 * if can not allocate table then, addCustomerToWaitingList
+	 * use WaitingList.addGuests() instead
+	 * @deprecated wrong method
+	 */
+	public void addCustomerToWaitingList() {
+		
 	}
 
+	
+
+	@Override
+	public boolean equals(Object obj) {
+		if( obj instanceof Order){
+			Order o = (Order) obj;
+			return this.orderID == o.orderID;
+		}
+		return false;
+	}
+
+	
+
+	@Override
+	public int hashCode() {
+		return this.orderID.hashCode();
+	}
 
 
 	@Override
