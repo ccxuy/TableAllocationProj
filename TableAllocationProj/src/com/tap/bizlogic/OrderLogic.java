@@ -16,8 +16,8 @@ public class OrderLogic {
 	public boolean addAnOrder(Order o) {
 		ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "auto.db");
 		try{
-			List<Operator> oplist = db.queryByExample(o);
-			if(1<oplist.size()){
+			List<Order> orderlist = db.queryByExample(o);
+			if(1<orderlist.size()){
 				//throw new Exception("Database have dupilicate entities for login user!");
 				return false;
 			}else{
