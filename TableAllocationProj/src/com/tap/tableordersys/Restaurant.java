@@ -5,6 +5,10 @@ import java.util.List;
 
 import com.tap.usersys.Operator;
 
+/**
+ * @author james
+ *
+ */
 public class Restaurant extends Table {
 		
 	public Restaurant() {
@@ -14,6 +18,10 @@ public class Restaurant extends Table {
 	 
 	private List<Table> tableList;
 	
+	/**
+	 * @param t
+	 * @return
+	 */
 	public int addTable(Table t) {
 		try{
 			this.tableList.add(t);
@@ -25,6 +33,10 @@ public class Restaurant extends Table {
 		return 0;
 	}
 	 
+	/**
+	 * @param t
+	 * @return
+	 */
 	public int delTable(Table t) {
 		Iterator<Table> it = tableList.iterator();
 		try{
@@ -51,6 +63,9 @@ public class Restaurant extends Table {
 		return this.name;
 	}
 	 
+	/**
+	 * @return
+	 */
 	public int emptyTableList() {
 		Iterator<Table> it = tableList.iterator();
 		try{
@@ -67,7 +82,10 @@ public class Restaurant extends Table {
 		return 0;
 	}
 	 
-	public List getTableList() {
+	/**
+	 * @return
+	 */
+	public List<Table> getTableList() {
 		if(tableList.size()>0){
 			return tableList;
 		}else{
