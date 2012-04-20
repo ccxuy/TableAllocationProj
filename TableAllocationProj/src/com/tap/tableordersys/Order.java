@@ -27,7 +27,6 @@ public class Order {
 	protected Guests gusets;
 	
 	
-	
 	public Order(String orderID, Operator operator, Table table, Guests gusets) {
 		super();
 		this.orderID = orderID;

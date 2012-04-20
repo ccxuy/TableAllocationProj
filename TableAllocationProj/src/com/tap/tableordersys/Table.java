@@ -17,6 +17,23 @@ public class Table extends Guests {
 	private int capacity;
 	
 	/*
+	 *james加上 
+	 */
+	private int currentNumOfPeople;
+	
+	public void setCurrentNumOfPeople(int num){
+		this.currentNumOfPeople = num;
+	}
+	public int getCurrentNumOfPeople(){
+		return this.currentNumOfPeople;
+	}
+	
+	public String getTableId(){
+		return this.id;
+	}
+	
+	
+	/*
 	 *这个constructor是为了避免在restaurant 里没有空constructor可用
 	 */
 	public Table(){
