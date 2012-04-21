@@ -23,9 +23,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TableColumn;
 
 
 public class TestShell extends Shell {
+	private Table table;
 
 	/**
 	 * Launch the application.
@@ -54,6 +58,18 @@ public class TestShell extends Shell {
 	public TestShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		setLayout(new RowLayout(SWT.HORIZONTAL));
+		
+		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		table.setLayoutData(new RowData(276, 201));
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		
+		TableItem tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText("New TableItem");
+		
+		TableColumn tblclmnId = new TableColumn(table, SWT.NONE);
+		tblclmnId.setWidth(100);
+		tblclmnId.setText("id");
 		
 	}
 
