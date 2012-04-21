@@ -10,6 +10,29 @@ public class Guests {
 	 
 	private boolean seatAlone;
 	 
+	/*
+	 * begin
+	 * james add
+	 */
+	public boolean getSeatAlone(){
+		return seatAlone;
+	}
+	
+	public void setSeatAlone(boolean b){
+		this.seatAlone = b;
+	} 
+	
+	public int getAmount(){
+		return this.amount;
+	}
+	
+	public void setAmount(int amount){
+		this.amount = amount;
+	}
+	/*
+	 * end
+	 * james add
+	 */
 	public int Gusets(int amount) {
 		return 0;
 	}

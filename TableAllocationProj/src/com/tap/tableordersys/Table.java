@@ -17,6 +17,7 @@ public class Table extends Guests {
 	private int capacity;
 	
 	/*
+	 *begin
 	 *james加上 
 	 */
 	private int currentNumOfPeople;
@@ -31,6 +32,10 @@ public class Table extends Guests {
 	public String getTableId(){
 		return this.id;
 	}
+	/*
+	 *end
+	 *james加上 
+	 */
 	
 	
 	/*
