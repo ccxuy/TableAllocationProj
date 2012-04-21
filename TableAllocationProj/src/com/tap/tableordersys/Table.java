@@ -17,10 +17,6 @@ public class Table {
 	 
 	private int capacity;
 	 
-	
-	
-	
-
 	public Table(String id) {
 		super();
 		this.id = id;
