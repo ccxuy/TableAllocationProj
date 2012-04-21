@@ -42,7 +42,7 @@ public class Order {
 		this.operator = operator;
 		this.table = table;
 		this.gusets = gusets;
-		this.state = Status.STATE_INIT.getValue();
+		this.state = Status.ORDER_STATE_INIT.getValue();
 	}
 
 	
@@ -55,7 +55,7 @@ public class Order {
 	public int checkIn() {
 		if(STATE_INIT == this.state
 				||STATE_ORDERD== this.state){
-			this.state = Status.STATE_ORDERD.getValue();
+			this.state = Status.ORDER_STATE_ORDERD.getValue();
 			return Status.SUCCESS.getValue();
 		}
 		return Status.FAIL.getValue();
@@ -68,17 +68,24 @@ public class Order {
 	 */
 	public int checkOut() {
 		if(STATE_ORDERD== this.state){
-			this.state = Status.STATE_FINISHED.getValue();
+			this.state = Status.ORDER_STATE_FINISHED.getValue();
 			return Status.SUCCESS.getValue();
 		}
 		return Status.FAIL.getValue();
 	}
 	
 	public int cancel(){
-		this.state = Status.STATE_CANCELED.getValue();
+		this.state = Status.ORDER_STATE_CANCELED.getValue();
 		return Status.SUCCESS.getValue();
 	}
 	
+	
+	
+	public int getState() {
+		return state;
+	}
+
+
 	/**
 	 * if can not allocate table then, addCustomerToWaitingList
 	 * use WaitingList.addGuests() instead
@@ -88,7 +95,9 @@ public class Order {
 		
 	}
 
-	
+	public int getGusetNumber(){
+		return this.gusets.getAmount();
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -98,8 +107,6 @@ public class Order {
 		}
 		return false;
 	}
-
-	
 
 	@Override
 	public int hashCode() {
@@ -112,8 +119,6 @@ public class Order {
 		return "Order [orderID=" + orderID + ", state=" + state + ", operator="
 				+ operator + ", table=" + table + ", gusets=" + gusets + "]";
 	}
-
-	
 	
 	
 }
