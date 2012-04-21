@@ -36,8 +36,6 @@ public class Table extends Guests {
 	 *end
 	 *james加上 
 	 */
-	
-	
 	/*
 	 *这个constructor是为了避免在restaurant 里没有空constructor可用
 	 */
@@ -48,8 +46,9 @@ public class Table extends Guests {
 	/*
 	 *constructor 
 	 */
-	public  Table(int capacity) {
-		this.capacity = capacity;	
+	public  Table(String id) {
+		super();
+		this.id = id;
 	}
 	 
 	/*

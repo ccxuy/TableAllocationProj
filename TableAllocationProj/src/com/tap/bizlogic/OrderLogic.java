@@ -30,7 +30,6 @@ public class OrderLogic {
 		//order需要一个可以将id初始化的constructor或者id直接被自动初始化
 		int numOfPeople = gusets.getAmount();
 		//如果不需要拼桌
-		if(gusets.getSeatAlone()==false){
 			Table tableCheck = checkNewTableExist(restaurant);
 			// assign table
 			while(numOfPeople>0&&tableCheck!=null){			
@@ -39,6 +38,8 @@ public class OrderLogic {
 			gusets.setAmount(tableCheck.getCapacity());
 			}else{gusets.setAmount(numOfPeople);}
 			Order o = new Order(operator, tableCheck, gusets);
+			//设置好table的list
+			tableCheck.getOrderList().add(o);
 			//减去已经放进一个talbe里的人数
 			numOfPeople = numOfPeople-tableCheck.getCapacity();
 			//order 存入数据库
@@ -46,14 +47,14 @@ public class OrderLogic {
 			//存好一次后马上再check一次有没有新的table可以sign 
 			if(numOfPeople>0){tableCheck = checkNewTableExist(restaurant);}
 		}//while
-		if(numOfPeople>0){
+			//允许拼桌
+			if(numOfPeople>0&&gusets.getSeatAlone()==false){
+				
+			}
+			//不允许拼桌
+			if(numOfPeople>0&&gusets.getSeatAlone()==true){
 			gusets.setAmount(numOfPeople);
 			//加入到waitinglist
-		}
-		}//如果拼桌
-		else{
-			
-			
 		}
 		//default
 		return false;
