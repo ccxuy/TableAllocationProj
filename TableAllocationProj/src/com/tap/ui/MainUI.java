@@ -10,6 +10,7 @@ package com.tap.ui;
  *    emil.crumhorn@gmail.com - initial API and implementation
  *******************************************************************************/ 
 
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,6 +22,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +32,9 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -152,21 +157,43 @@ public class MainUI {
 		//System.out.println(shell.getShell().getBounds());
 		//diplay Form view
         // Order Composite
-		ScrolledComposite scrolledComposite = new ScrolledComposite(shell.getShell(), SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
-		scrolledComposite.setAlwaysShowScrollBars(true);
+		/*ScrolledComposite scrolledComposite = new ScrolledComposite(shell.getShell(), SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
+		//scrolledComposite.setAlwaysShowScrollBars(true);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setSize(scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scrolledComposite.setBackground(new Color(null, 250, 250, 250));
 		scrolledComposite.setSize(640, 460);
 		scrolledComposite.setBounds(0, 0, 640, 460);
-		scrolledComposite.setLayout(new FlowLayout());
+		scrolledComposite.setLayout(new FlowLayout());*/
 		
-        doAddTableToForm(scrolledComposite);
-        doAddTableToForm(scrolledComposite);
-        doAddTableToForm(scrolledComposite);
-        doAddTableToForm(scrolledComposite);
-        doAddTableToForm(scrolledComposite);
+		 final TableViewer tableViewer = new TableViewer(shell, SWT.CHECK|SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
+	        
+		 	Table table = tableViewer.getTable();
+	        table.setLinesVisible(true);
+	        table.setHeaderVisible(true);
+	        table.setBounds(97, 79, 373, 154);
+
+	        final TableColumn newColumnTableColumn = new TableColumn(table, SWT.NONE);
+	        newColumnTableColumn.setWidth(80);
+	        newColumnTableColumn.setText("ID");
+
+	        final TableColumn newColumnTableColumn_1 = new TableColumn(table, SWT.NONE);
+	        newColumnTableColumn_1.setWidth(200);
+	        newColumnTableColumn_1.setText("Order amount");
+	        
+	        final TableColumn newColumnTableColumn_2 = new TableColumn(table, SWT.NONE);
+	        newColumnTableColumn_2.setWidth(200);
+	        newColumnTableColumn_2.setText("Booked amount");
+
+	        final TableColumn newColumnTableColumn_3 = new TableColumn(table, SWT.NONE);
+	        newColumnTableColumn_3.setWidth(150);
+	        newColumnTableColumn_3.setText("Capacity");
+
+	        final TableColumn newColumnTableColumn_4 = new TableColumn(table, SWT.NONE);
+	        newColumnTableColumn_4.setWidth(150);
+	        newColumnTableColumn_4.setText("Guest amount");
+        //doAddTableToForm(scrolledComposite);
 		// end Oder Composite
 	}
 
