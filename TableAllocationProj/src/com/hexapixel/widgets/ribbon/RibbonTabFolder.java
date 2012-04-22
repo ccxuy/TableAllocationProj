@@ -37,8 +37,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 
 import com.hexapixel.widgets.generic.ColorCache;
+import com.tap.locinfo.Setting;
 
 public class RibbonTabFolder extends Composite implements MouseListener, MouseMoveListener {
+	public static boolean ENABLE_DOUBLE_CLICK = Setting.ENABLE_DOUBLE_CLICK_IN_RIBBON_TAB_FOLDER;
 
 	private List<RibbonTab> mTabs;
 	public static int FIRST_TAB_SPACING = 46;
@@ -225,6 +227,7 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		
 	
 	public void mouseDoubleClick(MouseEvent me) {
+		if(ENABLE_DOUBLE_CLICK){
 		for (int i = 0; i < mTabs.size(); i++) {
 			RibbonTab ft = mTabs.get(i);
 			if (ft.getBounds() == null)
@@ -249,6 +252,7 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		// check buttons in toolbar if any
 		if (drawAsShell) 
 			updateButtonStates(me.x, me.y);
+		}
 	}
 	
 	void setQuickAccessBounds(Rectangle bounds) {
@@ -555,6 +559,9 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 	}
 	
 	public void selectTab(RibbonTab ft) {
+		if(false==ft.getVisible())
+			return;
+		
 		checkWidget();
 
 		if (mSelectedTab == ft)
@@ -728,6 +735,9 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		
 		// draw tabs
 		for (int i = 0; i < mTabs.size(); i++) {
+			if(false==mTabs.get(i).getVisible())
+				continue;
+			
 			RibbonTab ft = mTabs.get(i);
 			if (ft.isEmpty() && !drawEmptyTabs)
 				continue;

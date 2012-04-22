@@ -10,6 +10,9 @@ package com.tap.ui;
  *    emil.crumhorn@gmail.com - initial API and implementation
  *******************************************************************************/ 
 
+import java.awt.Dialog;
+
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -35,6 +38,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -60,23 +64,46 @@ import com.hexapixel.widgets.ribbon.RibbonTabFolder;
 import com.hexapixel.widgets.ribbon.RibbonToolbar;
 import com.hexapixel.widgets.ribbon.RibbonToolbarGrouping;
 import com.hexapixel.widgets.ribbon.RibbonTooltip;
+import com.tap.bizlogic.OperatorLogic;
 
 public class MainUI {
 
+	RibbonShell shell = null;
 	TableViewer tableViewer = null;
 	Table table = null;
+	MessageBox msgBox = null;
+	//Home tab
+	RibbonTab ftHome = null;
+	RibbonGroup tabGroupAccount = null;
+	RibbonButtonGroup userSub = null;
+	RibbonButton userID = null;
+	RibbonButton userPostion = null;
+	RibbonButton btLogoutBut = null;
+	RibbonGroup tabGroupLogin = null;
+	RibbonButton btLoginBut = null;
+	Text loginIDText = null;
+	Text loginPWText = null;
+	RibbonGroup tabGroupQuickLaunch = null;
+	//Order tab
+	RibbonTab ftOrder = null;
+	RibbonTab ftTable = null;
+	
+	//=======Logic stuff========
+	private OperatorLogic opLogic = new OperatorLogic();
 	
     /**
      * @param args
      */
     public void show() {
         Display display = new Display();
-        final RibbonShell shell = new RibbonShell(display, SWT.INHERIT_DEFAULT);
+        shell = new RibbonShell(display, SWT.INHERIT_DEFAULT);
         shell.setButtonImage(ImageCache.getImage("desk_32x32.ico"));
         //Shell shell = new Shell(display);
         
         shell.setText("Table Allocation Prgram");
         shell.setSize(800, 500);
+        
+        msgBox = new MessageBox(shell.getShell());
         
         //shell.getShell().setLayout(new FillLayout());
         /*shell.getShell().setLayout(new FlowLayout(swing2swt.layout.FlowLayout.CENTER, 5, 5));*/
@@ -119,9 +146,9 @@ public class MainUI {
         
         //ftf.setDrawEmptyTabs(false);
         // Tabs
-        RibbonTab ftHome = new RibbonTab(ftf, "Home");
-        RibbonTab ftOrder = new RibbonTab(ftf, "Ordering");
-        RibbonTab ftTable = new RibbonTab(ftf, "Table, Staff and History");
+        ftHome = new RibbonTab(ftf, "Home");
+        ftOrder = new RibbonTab(ftf, "Ordering");
+        ftTable = new RibbonTab(ftf, "Table, Staff and History");
         
         // Tooltip
         RibbonTooltip toolTip = new RibbonTooltip("Some Action Title", "This is content text that\nsplits over\nmore than one\nline\n\\b\\c255000000and \\xhas \\bdifferent \\c000000200look \\xand \\bfeel.", ImageCache.getImage("tooltip.jpg"), ImageCache.getImage("questionmark.gif"), "Press F1 for more help"); 
@@ -134,6 +161,8 @@ public class MainUI {
         
         doGenerateTableStaffHistTab(ftTable);
         
+        //Actions for the UI
+        doRefreshFunctionsInUI();
         
         Utils.centerDialogOnScreen(shell.getShell());
         shell.open();
@@ -224,7 +253,7 @@ public class MainUI {
 						item.setSize(shell.getBounds().width, maxHight);
 						
 					top += item.getBounds().height;
-					System.out.println(i + " top " + top);
+					//System.out.println(i + " top " + top);
 				}
 			}
 		});
@@ -332,18 +361,20 @@ public class MainUI {
 	private void doGenerateHomeTab(RibbonTab ftHome) {
 		// toolbar group
         //[TODO] Account UI
-        RibbonGroup tbGroup = new RibbonGroup(ftHome, "Account");
+        tabGroupAccount = new RibbonGroup(ftHome, "Account");
         //Image loginImage = new Image(null, "image/loginButton.png");
         Image userImage = new Image(null, "image/user.png");
         //RibbonButton rbLoginBut = new RibbonButton(tbGroup, loginImage, null, RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
         //rbLoginBut.setToolTip(new RibbonTooltip("Login", "Click here to login"));
-		RibbonButton userImg = new RibbonButton(tbGroup, userImage, null, 0);
+		RibbonButton userImg = new RibbonButton(tabGroupAccount, userImage, null, 0);
 		userImg.setEnabled(false);
-		RibbonGroupSeparator rgsAccount = new RibbonGroupSeparator(tbGroup);
-		RibbonButtonGroup userSub = new RibbonButtonGroup(tbGroup);
-		new Text(tbGroup, SWT.BORDER);
-		RibbonButton userID = new RibbonButton(userSub, null, "ID : 0903000039", RibbonButton.STYLE_NO_DEPRESS);
-		RibbonButton userPostion = new RibbonButton(userSub, null, "Postion : Admin", RibbonButton.STYLE_NO_DEPRESS);
+		RibbonGroupSeparator rgsAccount = new RibbonGroupSeparator(tabGroupAccount);
+		userSub = new RibbonButtonGroup(tabGroupAccount);
+		new Text(tabGroupAccount, SWT.BORDER);
+		userID = new RibbonButton(userSub, null, "ID : 0903000039", RibbonButton.STYLE_NO_DEPRESS);
+		userPostion = new RibbonButton(userSub, null, "Postion : Admin", RibbonButton.STYLE_NO_DEPRESS);
+		btLogoutBut = new RibbonButton(userSub, null, "Logout", RibbonButton.STYLE_NO_DEPRESS);
+		btLogoutBut.addSelectionListener(new btLogoutListener());
 		//rgsAccount.dispose();
 		/*userImg.dispose();
 		userID.dispose();
@@ -352,7 +383,7 @@ public class MainUI {
 		
 		// Login group
         //[TODO] Login UI
-        RibbonGroup tbGroupLogin = new RibbonGroup(ftHome, "Login");
+        tabGroupLogin = new RibbonGroup(ftHome, "Login");
         GridLayout glLogin = new GridLayout(1, false);
         glLogin.marginHeight = 7;
         glLogin.marginLeft = 170;
@@ -360,32 +391,136 @@ public class MainUI {
         glLogin.verticalSpacing = 1;
         glLogin.horizontalSpacing = 0;
         glLogin.marginBottom = 7;
-        tbGroupLogin.setLayout(glLogin);
+        tabGroupLogin.setLayout(glLogin);
         Image loginImage = new Image(null, "image/loginButton.png");
-        RibbonButton rbLoginBut = new RibbonButton(tbGroupLogin, loginImage, null, RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-        rbLoginBut.setToolTip(new RibbonTooltip("Login", "Click here to login"));
+        btLoginBut = new RibbonButton(tabGroupLogin, loginImage,null, RibbonButton.STYLE_NO_DEPRESS);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
+        btLoginBut.addSelectionListener(new btLoginListener());
+        
+        btLoginBut.setToolTip(new RibbonTooltip("Login", "Click here to login"));
 		userImg.setEnabled(false);
-		RibbonGroupSeparator rgsLogin = new RibbonGroupSeparator(tbGroupLogin);
-		RibbonButtonGroup loginSub = new RibbonButtonGroup(tbGroupLogin);
+		RibbonGroupSeparator rgsLogin = new RibbonGroupSeparator(tabGroupLogin);
+		RibbonButtonGroup loginSub = new RibbonButtonGroup(tabGroupLogin);
 		RibbonButton takeSpaceID = new RibbonButton(loginSub, null, "ID :                         ", RibbonButton.STYLE_NO_DEPRESS);
 		RibbonButton takeSpacePW = new RibbonButton(loginSub, null, "Password :                   ", RibbonButton.STYLE_NO_DEPRESS);
 		takeSpaceID.setEnabled(false);
 		takeSpacePW.setEnabled(false);
-		Text loginIDText = new Text(tbGroupLogin, SWT.BORDER);
-		Text loginPWText = new Text(tbGroupLogin, SWT.BORDER);
+		loginIDText = new Text(tabGroupLogin, SWT.BORDER);
+		loginPWText = new Text(tabGroupLogin, SWT.BORDER);
+		loginPWText.setEchoChar('●');
 		//loginIDText.setBounds(loginIDText.getBounds().x+120, loginIDText.getBounds().y, 0, 20);
 		//rgsAccount.dispose();
 		// end Login group
         
 		//Quick lunch
 		//[XXX]Quick lunch
-        RibbonGroup ftg = new RibbonGroup(ftHome, "Quick lunch");
+        tabGroupQuickLaunch = new RibbonGroup(ftHome, "Quick launch");
         // Button
-        RibbonButton rbNewCutomer = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "New customer", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbNewCutomer = new RibbonButton(tabGroupQuickLaunch, ImageCache.getImage("olb_picture.gif"), "New customer", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
         rbNewCutomer.setToolTip(new RibbonTooltip("Add new customer", "System will automatically allocate seat for the customer"));
         //end Quick lunch
         
         //end Home tab
 	}
 
+	private void doRefreshFunctionsInUI(){
+		doCleanUserLoginInfo();
+		//System.out.println("login?"+this.opLogic.isLogined());
+		if(this.opLogic.isLogined()){
+			userID.dispose();
+			userPostion.dispose();
+			btLogoutBut.dispose();
+			userID = new RibbonButton(userSub, null, "ID : "+this.opLogic.getCurrentOperator().getId()
+					, RibbonButton.STYLE_NO_DEPRESS);
+			userPostion = new RibbonButton(userSub, null, "Postion : "+this.opLogic.getCurrentOperator().getPosition()
+					, RibbonButton.STYLE_NO_DEPRESS);
+			btLogoutBut = new RibbonButton(userSub, null, "Logout"
+					, RibbonButton.STYLE_NO_DEPRESS);
+			btLogoutBut.addSelectionListener(new btLogoutListener());
+			this.tabGroupLogin.setVisible(false);
+			this.tabGroupAccount.setVisible(true);
+			this.tabGroupQuickLaunch.setVisible(true);
+			
+			/*this.ftOrder.enable();
+			this.ftTable.enable();*/
+			this.ftOrder.setVisible(true);
+			if(opLogic.isAdmin()){
+				this.ftTable.setVisible(true);
+			}
+			doFuckingRefresh();
+			//System.out.println("Login tabGroupLogin "+this.tabGroupLogin.getVisible());
+			//System.out.println("tabGroupAccount Visiable "+this.tabGroupAccount.getVisible());
+		}else{
+			this.tabGroupLogin.setVisible(true);
+			this.tabGroupAccount.setVisible(false);
+			this.tabGroupQuickLaunch.setVisible(false);
+			this.ftOrder.setVisible(false);
+			this.ftTable.setVisible(false);
+			/*this.ftOrder.disable();
+			this.ftTable.disable();*/
+		}
+	}
+
+	private void doCleanUserLoginInfo() {
+		btLoginBut.setChecked(false);
+		btLogoutBut.setChecked(false);
+		loginIDText.setText("");
+		loginPWText.setText("");
+	}
+
+	private void doFuckingRefresh() {
+		//System.out.println("shell.getShell().getSize()"+shell.getShell().getSize());
+		shell.setSize(shell.getShell().getSize().x+1, shell.getShell().getSize().y);
+		shell.redrawContents();
+		shell.setSize(shell.getShell().getSize().x-1, shell.getShell().getSize().y);
+		shell.redrawContents();
+		//System.out.println("shell.getShell().getSize()"+shell.getShell().getSize());
+	}
+	
+	
+	class btLoginListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			try {
+				opLogic.login(loginIDText.getText(), loginPWText.getText());
+			} catch (Exception e) {
+				// [TODO] Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(opLogic.isLogined()){
+				msgBox.setMessage("Welcome back, "+opLogic.getCurrentOperator().getId());
+				msgBox.open();
+			}else{
+				msgBox.setMessage("Login failed, wrong id or password?");
+				msgBox.open();
+			}
+			//System.out.println("login button"+loginIDText.getText());
+			
+			doRefreshFunctionsInUI();
+		}
+	}
+	class btLogoutListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			try {
+				opLogic.logout();
+			} catch (Exception e) {
+				// [TODO] Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(false==opLogic.isLogined()){
+				msgBox.setMessage("Logout success!");
+				msgBox.open();
+			}else{
+				msgBox.setMessage("Something went wrong.....");
+				msgBox.open();
+			}
+			//System.out.println("login button"+loginIDText.getText());
+			
+			doRefreshFunctionsInUI();
+		}
+	}
 }

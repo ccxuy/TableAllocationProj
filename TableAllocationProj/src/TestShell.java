@@ -31,12 +31,16 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 
 public class TestShell extends Shell {
 	private DataBindingContext m_bindingContext;
 	private Table table;
 	private TableItem tableItem;
+	private Text text;
 
 	/**
 	 * Launch the application.
@@ -99,6 +103,18 @@ public class TestShell extends Shell {
 		tblclmnSome.setText("some");
 		scrolledComposite.setContent(table);
 		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
+		Button btnNewButton = new Button(this, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnNewButton.setBounds(26, 209, 80, 27);
+		btnNewButton.setText("New Button");
+		
+		text = new Text(this, SWT.BORDER);
+		text.setBounds(130, 209, 73, 23);
 		m_bindingContext = initDataBindings();
 		
 	}

@@ -10,8 +10,9 @@ public class TestMain {
 	 */
 	public static void main(String[] args) throws Exception {
 		// [TODO] Auto-generated method stub
-		System.out.println( OperatorLogic.register("admin", "admin", OperatorLogic.PO_ADMIN));
-		System.out.println( OperatorLogic.login("admin", "admin").toString() );
+		OperatorLogic opLogic = new OperatorLogic();
+		System.out.println( opLogic.register("staff", "staff", OperatorLogic.PO_STAFF));
+		System.out.println( opLogic.login("admin", "admin").toString() );
 
 	}
 

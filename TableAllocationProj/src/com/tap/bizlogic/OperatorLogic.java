@@ -14,13 +14,27 @@ public class OperatorLogic {
 	transient public final static String PO_ADMIN = "admin";
 	transient public final static String PO_STAFF = "staff";
 	
+	private Operator currentOperator = null;
+	
+	public Operator getCurrentOperator() {
+		return currentOperator;
+	}
+
+	public void setCurrentOperator(Operator currentOperator) {
+		this.currentOperator = currentOperator;
+	}
+
+	public boolean isLogined(){
+		return this.currentOperator!=null;
+	}
+	
 	/**
 	 * @param id
 	 * @param pw
 	 * @return Operator, if wrong pw or id, return null
 	 * @throws Exception database error
 	 */
-	public static Operator login(String id, String pw) throws Exception{
+	public Operator login(String id, String pw) throws Exception{
 		ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "auto.db");
 		try{
 			List<Operator> oplist = db.queryByExample(new Operator(id, pw));
@@ -29,11 +43,16 @@ public class OperatorLogic {
 			}else if(0==oplist.size()){
 				return null;
 			}else{
+				this.currentOperator = oplist.get(0);
 				return oplist.get(0);
 			}
 		}finally{
 			db.close();
 		}
+	}
+	
+	public void logout(){
+		this.currentOperator = null;
 	}
 	
 	/**
@@ -42,7 +61,7 @@ public class OperatorLogic {
 	 * @param position string PO_ADMIN or PO_STAFF
 	 * @return int SIGN_SUCCESS SIGN_FAIL
 	 */
-	public static int register(String id, String pw, String position){
+	public int register(String id, String pw, String position){
 		ObjectContainer db = DataControl.getOCDB();
 		try{
 			Operator op = new Operator();
@@ -64,6 +83,10 @@ public class OperatorLogic {
 			db.close();
 		}
 		//return SIGN_FAIL;
+	}
+
+	public boolean isAdmin() {
+		return currentOperator.getPosition().equals(PO_ADMIN);
 	}
 
 }
