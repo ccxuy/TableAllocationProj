@@ -447,6 +447,9 @@ public class MainUI {
 				this.ftTable.setVisible(true);
 			}
 			doFuckingRefresh();
+			//OrderModifyDialog omDialog = new OrderModifyDialog(shell.getShell(), SWT.INHERIT_DEFAULT);
+			//omDialog.open();
+			
 			//System.out.println("Login tabGroupLogin "+this.tabGroupLogin.getVisible());
 			//System.out.println("tabGroupAccount Visiable "+this.tabGroupAccount.getVisible());
 		}else{
