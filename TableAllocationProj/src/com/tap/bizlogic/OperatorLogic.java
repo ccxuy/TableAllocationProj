@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import com.tap.datastorage.DataControl;
 import com.tap.usersys.Operator;
 
 public class OperatorLogic {
@@ -42,14 +43,20 @@ public class OperatorLogic {
 	 * @return int SIGN_SUCCESS SIGN_FAIL
 	 */
 	public static int register(String id, String pw, String position){
-		ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "auto.db");
+		ObjectContainer db = DataControl.getOCDB();
 		try{
-			List<Operator> oplist = db.queryByExample(new Operator());
+			Operator op = new Operator();
+			op.setId(id);
+			List<Operator> oplist = db.queryByExample( op );
 			if(0<oplist.size()){
 				//throw new Exception("Database have dupilicate entities for login user!");
+				System.err.println("Exist following operator:");
+				for(Operator o:oplist){
+					System.err.println("\t"+o);
+				}
 				return SIGN_FAIL;
 			}else{
-				Operator op = new Operator(id, pw, position);
+				op = new Operator(id, pw, position);
 				db.store(op);
 				return SIGN_SUCCESS;
 			}
