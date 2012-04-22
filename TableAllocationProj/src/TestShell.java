@@ -10,61 +10,30 @@ import swing2swt.layout.FlowLayout;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
-import swing2swt.layout.BoxLayout;
-import swing2swt.layout.BorderLayout;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 
 public class TestShell extends Shell {
-	private DataBindingContext m_bindingContext;
-	private Table table;
-	private TableItem tableItem;
 	private Text text;
+	private Table table;
 
 	/**
 	 * Launch the application.
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		Display display = Display.getDefault();
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				try {
-					Display display = Display.getDefault();
-					TestShell shell = new TestShell(display);
-					shell.open();
-					shell.layout();
-					while (!shell.isDisposed()) {
-						if (!display.readAndDispatch()) {
-							display.sleep();
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+		try {
+			Display display = Display.getDefault();
+			TestShell shell = new TestShell(display);
+			shell.open();
+			shell.layout();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
-		});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -73,50 +42,68 @@ public class TestShell extends Shell {
 	 */
 	public TestShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
-		setLayout(null);
 		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolledComposite.setBounds(3, 3, 300, 200);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		Label lblNewLabel = new Label(this, SWT.NONE);
+		lblNewLabel.setImage(SWTResourceManager.getImage(TestShell.class, "/tooltip.jpg"));
+		lblNewLabel.setText("New Label");
 		
-		table = new Table(scrolledComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		text = new Text(this, SWT.BORDER);
+		
+		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-		TableColumn tblclmnId = new TableColumn(table, SWT.NONE);
-		tblclmnId.setWidth(100);
-		tblclmnId.setText("id");
+		Canvas canvas = new Canvas(this, SWT.NONE);
 		
-		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
-		tblclmnName.setWidth(100);
-		tblclmnName.setText("name");
+		Label label = new Label(this, SWT.NONE);
+		label.setText("21");
 		
-		tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText("123123");
-		
-		TableItem tableItem_1 = new TableItem(table, SWT.NONE);
-		tableItem_1.setText(new String[] {"123", "312", "1123", "32"});
-		
-		TableColumn tblclmnSome = new TableColumn(table, SWT.NONE);
-		tblclmnSome.setWidth(100);
-		tblclmnSome.setText("some");
-		scrolledComposite.setContent(table);
-		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
-		Button btnNewButton = new Button(this, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-		btnNewButton.setBounds(26, 209, 80, 27);
-		btnNewButton.setText("New Button");
-		
-		text = new Text(this, SWT.BORDER);
-		text.setBounds(130, 209, 73, 23);
-		m_bindingContext = initDataBindings();
-		
+		Label label_1 = new Label(this, SWT.NONE);
+		label_1.setText("41");
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(GroupLayout.LEADING)
+				.add(groupLayout.createSequentialGroup()
+					.add(groupLayout.createParallelGroup(GroupLayout.LEADING)
+						.add(groupLayout.createSequentialGroup()
+							.add(5)
+							.add(groupLayout.createParallelGroup(GroupLayout.LEADING)
+								.add(groupLayout.createSequentialGroup()
+									.add(lblNewLabel)
+									.add(5)
+									.add(text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.add(5)
+									.add(table, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.add(5)
+									.add(canvas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.add(label_1)))
+						.add(groupLayout.createSequentialGroup()
+							.add(36)
+							.add(label, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(131, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(GroupLayout.LEADING)
+				.add(groupLayout.createSequentialGroup()
+					.add(5)
+					.add(groupLayout.createParallelGroup(GroupLayout.LEADING)
+						.add(groupLayout.createSequentialGroup()
+							.add(23)
+							.add(lblNewLabel))
+						.add(groupLayout.createSequentialGroup()
+							.add(20)
+							.add(text, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.add(groupLayout.createSequentialGroup()
+							.add(9)
+							.add(table, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.add(canvas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.add(17)
+					.add(label)
+					.add(15)
+					.add(label_1))
+		);
+		setLayout(groupLayout);
+		createContents();
 	}
 
 	/**
@@ -131,14 +118,5 @@ public class TestShell extends Shell {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
-	}
-	protected DataBindingContext initDataBindings() {
-		DataBindingContext bindingContext = new DataBindingContext();
-		//
-		IObservableValue tableItemObserveTextObserveWidget = SWTObservables.observeText(tableItem);
-		IObservableValue getIMETextObserveValue = PojoObservables.observeValue(getIME(), "text");
-		bindingContext.bindValue(tableItemObserveTextObserveWidget, getIMETextObserveValue, null, null);
-		//
-		return bindingContext;
 	}
 }
