@@ -13,6 +13,7 @@ package com.tap.ui;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -26,9 +27,12 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -59,6 +63,9 @@ import com.hexapixel.widgets.ribbon.RibbonTooltip;
 
 public class MainUI {
 
+	TableViewer tableViewer = null;
+	Table table = null;
+	
     /**
      * @param args
      */
@@ -78,17 +85,23 @@ public class MainUI {
         //System.out.println(shell.getShell().getLayout());
         //Layout layout = shell.getShell().getLayout();
         
+        doGenerateTableOfOrder(shell.getShell());
+        
         //shell.getShell().setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        Composite mainComposite = new Composite(shell.getShell(), SWT.BORDER);
+        /*MainViewComposite mainComposite = new MainViewComposite(shell.getShell(), SWT.BORDER);
+        //Composite mainComposite = new Composite(shell.getShell(), SWT.BORDER);
 
         mainComposite.setBackground(new Color(null, 200, 200, 200));
-        mainComposite.setSize(600, 700);
+        mainComposite.setEnabled(false);
+        //mainComposite.setSize(600, 700);
         //mainComposite.setBounds(1, 1, 100, 700);
-        mainComposite.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+       // mainComposite.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         //mainComposite.setLayout(new FillLayout(SWT.BORDER));
         //mainComposite.setLayout(null);
         
+        
         doGenerateFormView(mainComposite.getShell());
+        mainComposite.setContent(table);*/
         
         doGenerateToolbar(shell);
         
@@ -158,43 +171,77 @@ public class MainUI {
 		//diplay Form view
         // Order Composite
 		/*ScrolledComposite scrolledComposite = new ScrolledComposite(shell.getShell(), SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
-		//scrolledComposite.setAlwaysShowScrollBars(true);
+		scrolledComposite.setAlwaysShowScrollBars(true);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setSize(scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scrolledComposite.setBackground(new Color(null, 250, 250, 250));
 		scrolledComposite.setSize(640, 460);
 		scrolledComposite.setBounds(0, 0, 640, 460);
-		scrolledComposite.setLayout(new FlowLayout());*/
+		scrolledComposite.setLayout(new FlowLayout());//*/
 		
-		 final TableViewer tableViewer = new TableViewer(shell, SWT.CHECK|SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
+		 doGenerateTableOfOrder(shell);
 	        
-		 	Table table = tableViewer.getTable();
-	        table.setLinesVisible(true);
-	        table.setHeaderVisible(true);
-	        table.setBounds(97, 79, 373, 154);
-
-	        final TableColumn newColumnTableColumn = new TableColumn(table, SWT.NONE);
-	        newColumnTableColumn.setWidth(80);
-	        newColumnTableColumn.setText("ID");
-
-	        final TableColumn newColumnTableColumn_1 = new TableColumn(table, SWT.NONE);
-	        newColumnTableColumn_1.setWidth(200);
-	        newColumnTableColumn_1.setText("Order amount");
 	        
-	        final TableColumn newColumnTableColumn_2 = new TableColumn(table, SWT.NONE);
-	        newColumnTableColumn_2.setWidth(200);
-	        newColumnTableColumn_2.setText("Booked amount");
-
-	        final TableColumn newColumnTableColumn_3 = new TableColumn(table, SWT.NONE);
-	        newColumnTableColumn_3.setWidth(150);
-	        newColumnTableColumn_3.setText("Capacity");
-
-	        final TableColumn newColumnTableColumn_4 = new TableColumn(table, SWT.NONE);
-	        newColumnTableColumn_4.setWidth(150);
-	        newColumnTableColumn_4.setText("Guest amount");
         //doAddTableToForm(scrolledComposite);
 		// end Oder Composite
+	}
+
+	private void doGenerateTableOfOrder(final Shell shell) {
+		doGenerateNewTableView(shell);
+
+		doGenerateTableColumn(new String[]{"id","order"});
+		doGenerateTableItem(new String[]{"id1","order2"});
+	}
+
+	private void doGenerateNewTableView(final Shell shell) {
+		tableViewer = new TableViewer(shell, SWT.CHECK | SWT.MULTI
+				| SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+		if(null!=table)
+			table.dispose();
+		
+		table = tableViewer.getTable();
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		
+		table.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+
+				// table.setLocation(shell.getLocation());
+				// System.out.println("setLocation"+table.getLocation());
+				// System.out.println("size:"+table.getSize());
+				int top = 143;
+				int left = 0;
+				int maxHight = shell.getBounds().height-143;
+				Control[] items = shell.getChildren();
+				for (int i = 1; i < items.length; i++) {
+					Control item = items[i];
+					item.setLocation(left, top);
+					if(item.getSize().y<maxHight)
+						item.setSize(shell.getBounds().width, item.getSize().y);
+					else
+						item.setSize(shell.getBounds().width, maxHight);
+						
+					top += item.getBounds().height;
+					System.out.println(i + " top " + top);
+				}
+			}
+		});
+	}
+
+	private void doGenerateTableItem(String[] itemStrings) {
+		TableItem newTableItem = new TableItem(table, SWT.NONE);
+		newTableItem.setText(itemStrings);
+	}
+
+	private void doGenerateTableColumn(String[] columnStrings) {
+		for(String s: columnStrings){
+			final TableColumn newColumnTableColumn = new TableColumn(table,
+					SWT.NONE);
+			newColumnTableColumn.setWidth(100);
+			newColumnTableColumn.setText(s);
+		}
 	}
 
 	private void doAddTableToForm(ScrolledComposite scrolledComposite) {

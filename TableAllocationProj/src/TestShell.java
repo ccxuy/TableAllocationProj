@@ -26,29 +26,41 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.Realm;
 
 
 public class TestShell extends Shell {
+	private DataBindingContext m_bindingContext;
 	private Table table;
+	private TableItem tableItem;
 
 	/**
 	 * Launch the application.
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		try {
-			Display display = Display.getDefault();
-			TestShell shell = new TestShell(display);
-			shell.open();
-			shell.layout();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
+		Display display = Display.getDefault();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				try {
+					Display display = Display.getDefault();
+					TestShell shell = new TestShell(display);
+					shell.open();
+					shell.layout();
+					while (!shell.isDisposed()) {
+						if (!display.readAndDispatch()) {
+							display.sleep();
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
 	}
 
 	/**
@@ -57,19 +69,37 @@ public class TestShell extends Shell {
 	 */
 	public TestShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
-		setLayout(new RowLayout(SWT.HORIZONTAL));
+		setLayout(null);
 		
-		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setLayoutData(new RowData(276, 201));
+		ScrolledComposite scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		scrolledComposite.setBounds(3, 3, 300, 200);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		
+		table = new Table(scrolledComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
-		TableItem tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText("New TableItem");
 		
 		TableColumn tblclmnId = new TableColumn(table, SWT.NONE);
 		tblclmnId.setWidth(100);
 		tblclmnId.setText("id");
+		
+		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
+		tblclmnName.setWidth(100);
+		tblclmnName.setText("name");
+		
+		tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText("123123");
+		
+		TableItem tableItem_1 = new TableItem(table, SWT.NONE);
+		tableItem_1.setText(new String[] {"123", "312", "1123", "32"});
+		
+		TableColumn tblclmnSome = new TableColumn(table, SWT.NONE);
+		tblclmnSome.setWidth(100);
+		tblclmnSome.setText("some");
+		scrolledComposite.setContent(table);
+		scrolledComposite.setMinSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		m_bindingContext = initDataBindings();
 		
 	}
 
@@ -85,5 +115,14 @@ public class TestShell extends Shell {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		IObservableValue tableItemObserveTextObserveWidget = SWTObservables.observeText(tableItem);
+		IObservableValue getIMETextObserveValue = PojoObservables.observeValue(getIME(), "text");
+		bindingContext.bindValue(tableItemObserveTextObserveWidget, getIMETextObserveValue, null, null);
+		//
+		return bindingContext;
 	}
 }
