@@ -1,146 +1,135 @@
 package com.tap.tableordersys;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Table extends Guests {
+import com.tap.locinfo.Status;
+
+public class Table {
  
 	private String id;
-	 
+	
+	@Deprecated
 	private String name;
 	 
 	private List<Order> orderList;
 	 
-	private List bookOrderList;
+	private List<BookOrder> bookOrderList;
 	 
 	private int capacity;
-	
-	/*
-	 *begin
-	 *james加上 
-	 */
-	private int currentNumOfPeople;
-	
-	public void setCurrentNumOfPeople(int num){
-		this.currentNumOfPeople = num;
-	}
-	public int getCurrentNumOfPeople(){
-		return this.currentNumOfPeople;
-	}
-	
-	public String getTableId(){
-		return this.id;
-	}
-	/*
-	 *end
-	 *james加上 
-	 */
-	/*
-	 *这个constructor是为了避免在restaurant 里没有空constructor可用
-	 */
-	public Table(){
-		
-	}
-	
-	/*
-	 *constructor 
-	 */
-	public  Table(String id) {
+	 
+	public Table(String id) {
 		super();
 		this.id = id;
 	}
-	 
-	/*
-	 *constructor
-	 *
-	 */
-	public Table(String name, int capacity) {
-		this.name = name;
-		this.capacity = capacity;		
-	}
-	
-	/*
-	 * add order to a table
-	 */
-	public int addOrder(Order o) {
-		try{
-			this.orderList.add(o);
-			return 1;
-			}catch(Exception e){
-				e.printStackTrace();
-				System.out.print("\n"+"addOrder(Order o) error");
-			}
-		return 0;
-	}
-	 
-	/*
-	 * cancel order from a table
-	 */
-	public int cancelOrder(Order o) {
-		Iterator<Order> it = orderList.iterator();
-		try{
-		Order obj = null;
-		while(it.hasNext()){
-			obj = it.next();
-			if(obj.equals(o)){
-				orderList.remove(obj);
-			}
-		}
-		return 1;	
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("\n"+"cancelOrder(Order o) error");
-		}
-		
-		return 0;
+
+	public Table(String id, int capacity) {
+		super();
+		this.id = id;
+		this.capacity = capacity;
 	}
 
-	 
-	/*
-	 *get order list 
-	 */
-	public List<Order> getOrderList() {
-		if(orderList.size()>0){
-			return orderList;
-		}else{
-			return null;
-		}
+	public Table(String id, List orderList, List bookOrderList, int capacity) {
+		super();
+		this.id = id;
+		this.orderList = orderList;
+		this.bookOrderList = bookOrderList;
+		this.capacity = capacity;
 	}
 	 
-	/*
-	 *这个方法拿来做什么？？
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public int addOrder(Order o) {
+		this.orderList.add(o);
+		return Status.SUCCESS.getValue();
+	}
+	 
+	public int cancelOrder(Order order) {
+		int res = Status.FAIL.getValue();
+		for(Order o: this.orderList){
+			if( o.equals(order) ){
+				o.cancel();
+				res = Status.SUCCESS.getValue();
+			}
+		}
+		return res;
+	}
+
+	public List<Order> getOrderList() {
+		return orderList;
+	}
+
+	public void setOrderList(List<Order> orderList) {
+		this.orderList = orderList;
+	}
+
+	public List<BookOrder> getBookOrderList() {
+		return bookOrderList;
+	}
+
+	public void setBookOrderList(List<BookOrder> bookOrderList) {
+		this.bookOrderList = bookOrderList;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	/**
+	 * Add up all order that are ordered in this table
+	 * @return how many guest in this table
 	 */
-	public int setOrderList() {
-		
-		return 0;
+	public int countGuestNumberInTable(){
+		int num = 0;
+		for(Order o:this.orderList){
+			if( Status.ORDER_STATE_ORDERD.getValue()==o.getState() ){
+				num+=o.getGusetNumber();
+			}
+		}
+		return num;
+	}
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
+	public int doEmptyOrderList() {
+		this.orderList.clear();
+		return Status.SUCCESS.getValue();
 	}
 	
-	/*
-	 *get capacity of a table 
-	 */
-	public int getCapacity() {
-		return this.capacity;
-	}
-	 
-	/*
-	 *delete all elements of a order list 
-	 */
-	public int emptyOrderList() {
-		Iterator<Order> it = orderList.iterator();
-		try{
-		Order obj = null;
-		while(it.hasNext()){
-			obj = it.next();	
-			orderList.remove(obj);
+	public int doCleanUselessInfo(){
+		for(Order o:this.orderList){
+			if( Status.ORDER_STATE_ORDERD.getValue()!=o.getState() ){
+				this.orderList.remove(o);
+			}
 		}
-		return 1;	
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("\n"+"cancelOrder(Order o) error");
+		for(Order o:this.bookOrderList){
+			if( Status.ORDER_STATE_ORDERD.getValue()!=o.getState() ){
+				this.orderList.remove(o);
+			}
 		}
-		return 0;
+		return Status.SUCCESS.getValue();
 	}
-	 
+
+	@Override
+	public int hashCode() {
+		return this.id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Table? this.id.equals( ((Table)obj).id ) : false;
+	}
+
+	@Override
+	public String toString() {
+		// [TODO] Auto-generated method stub
+		return super.toString();
+	}
 }
  

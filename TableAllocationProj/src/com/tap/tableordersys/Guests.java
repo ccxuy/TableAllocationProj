@@ -9,37 +9,74 @@ public class Guests {
 	private int amount;
 	 
 	private boolean seatAlone;
-	 
-	/*
-	 * begin
-	 * james add
-	 */
-	public boolean getSeatAlone(){
-		return seatAlone;
+
+	public Guests(int id) {
+		super();
+		this.id = id;
+	}
+
+	public Guests(String addtionalInfo, int amount, boolean seatAlone) {
+		super();
+		this.addtionalInfo = addtionalInfo;
+		this.amount = amount;
+		this.seatAlone = seatAlone;
 	}
 	
-	public void setSeatAlone(boolean b){
-		this.seatAlone = b;
-	} 
-	
-	public int getAmount(){
-		return this.amount;
+	public Guests(int id, String addtionalInfo, int amount, boolean seatAlone) {
+		super();
+		this.id = id;
+		this.addtionalInfo = addtionalInfo;
+		this.amount = amount;
+		this.seatAlone = seatAlone;
 	}
-	
-	public void setAmount(int amount){
+
+	public String getAddtionalInfo() {
+		return addtionalInfo;
+	}
+
+	public void setAddtionalInfo(String addtionalInfo) {
+		this.addtionalInfo = addtionalInfo;
+	}
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	/*
-	 * end
-	 * james add
-	 */
-	public int Gusets(int amount) {
-		return 0;
+
+	public boolean isSeatAlone() {
+		return seatAlone;
 	}
-	 
-	public int Guests(int amount, boolean seatAlone, String add) {
-		return 0;
+
+	public void setSeatAlone(boolean seatAlone) {
+		this.seatAlone = seatAlone;
 	}
-	 
+
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "Guests [id=" + id + ", addtionalInfo=" + addtionalInfo
+				+ ", amount=" + amount + ", seatAlone=" + seatAlone + "]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if( obj instanceof Guests){
+			Guests o = (Guests) obj;
+			return this.id == o.id;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
+	
 }
  

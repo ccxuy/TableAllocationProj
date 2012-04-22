@@ -3,56 +3,40 @@ package com.tap.tableordersys;
 import java.util.Iterator;
 import java.util.List;
 
+import com.tap.locinfo.Status;
 import com.tap.usersys.Operator;
 
-/**
- * @author james
- *
- */
-public class Restaurant extends Table {
-		
-	public Restaurant() {
-	}
-
+public class Restaurant{
+ 
 	private String name;
 	 
 	private List<Table> tableList;
-	
-	/**
-	 * @param t
-	 * @return
-	 */
+
+	public Restaurant(String name, List<Table> tableList) {
+		super();
+		this.name = name;
+		this.tableList = tableList;
+	}
+
 	public int addTable(Table t) {
-		try{
+		if( false == this.tableList.contains(t) ){
 			this.tableList.add(t);
-			return 1;
-			}catch(Exception e){
-				e.printStackTrace();
-				System.out.print("\n"+"addTable(Table t) error");
-			}
-		return 0;
+			return Status.SUCCESS.getValue();
+		}
+		return Status.FAIL.getValue();
 	}
 	 
 	/**
-	 * @param t
-	 * @return
+	 * @warning it use equals method!
+	 * @param t table that you want to delete
+	 * @return how many table deleted
 	 */
 	public int delTable(Table t) {
-		Iterator<Table> it = tableList.iterator();
-		try{
-			Table obj = null;
-		while(it.hasNext()){
-			obj = it.next();
-			if(obj.equals(t)){
-				tableList.remove(obj);
-			}
+		int res = 0;
+		while( this.tableList.remove(t) ){
+			res++;
 		}
-		return 1;	
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("\n"+"delTable(Table t) error");
-		}
-		return 0;
+		return res;
 	}
 	 
 	public void setName(String name) {
@@ -63,34 +47,13 @@ public class Restaurant extends Table {
 		return this.name;
 	}
 	 
-	/**
-	 * @return
-	 */
 	public int emptyTableList() {
-		Iterator<Table> it = tableList.iterator();
-		try{
-			Table obj = null;
-		while(it.hasNext()){
-			obj = it.next();	
-			tableList.remove(obj);
-		}
-		return 1;	
-		}catch(Exception e){
-			e.printStackTrace();
-			System.out.print("\n"+"emptyTableList error");
-		}
-		return 0;
+		this.tableList.clear();
+		return Status.SUCCESS.getValue();
 	}
 	 
-	/**
-	 * @return
-	 */
 	public List<Table> getTableList() {
-		if(tableList.size()>0){
-			return tableList;
-		}else{
-			return null;
-		}
+		return tableList;
 	}
 }
  
