@@ -10,6 +10,18 @@ public class Operator {
 	private String password;
 	 
 	private String position;
+	
+	public enum Position {
+		admin("admin"),
+		staff("staff");
+		String position;
+		Position(String s){
+			position = s;
+		}
+		public String getString(){
+			return position;
+		}
+	}
 
 	//final transient static enum CHOICE_POSOTION = {"admin","staff"}; 
 	
@@ -50,10 +62,23 @@ public class Operator {
 		return position;
 	}
 
-	public void setPosition(String position) {
-		this.position = position;
+	public boolean setPosition(String position) {
+		if( true == checkValidPosition(position) ){
+			this.position = position;
+			return true;
+		}else{
+			return false;
+		}
 	}
 
+	public boolean checkValidPosition(String p){
+		boolean result = false;
+		for(Position po:Position.values()){
+			if(p.equals(po.getString()))
+				result = true;
+		}
+		return result;
+	}
 	@Override
 	public String toString() {
 		return "Operator [id=" + id + ", password=" + password + ", position="

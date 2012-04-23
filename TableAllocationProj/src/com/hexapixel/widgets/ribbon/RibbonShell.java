@@ -253,7 +253,10 @@ public class RibbonShell implements MouseListener, MouseMoveListener, KeyListene
 	}
 	
 	public void redrawContents() {
+		mShell.redraw();
 		mTabFolder.redraw();
+		updateCalculations();
+		updateShellStructure();
 	}
 	
 	public boolean isDisposed() {
@@ -322,6 +325,10 @@ public class RibbonShell implements MouseListener, MouseMoveListener, KeyListene
 		rightSide = new Rectangle(bounds.width-SIDE_FLEX, CORNER_FLEX, SIDE_FLEX, bounds.height - (CORNER_FLEX * 2));
 		topRightCorner = new Rectangle(bounds.width-CORNER_FLEX, 0, CORNER_FLEX, CORNER_FLEX);
 		topSide = new Rectangle(CORNER_FLEX, 0, bounds.width-(CORNER_FLEX * 2), SIDE_FLEX);
+		/*System.out.println("mShell "+bounds);
+		System.out.println("bottomLeftCorner "+bottomLeftCorner);
+		System.out.println("bottomSide "+bottomSide);
+		System.out.println("topLeftCorner "+topLeftCorner);*/
 	}
 	
 	private boolean isInside(int x, int y, Rectangle rect) {

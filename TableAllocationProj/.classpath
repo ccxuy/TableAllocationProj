@@ -20,5 +20,10 @@
 	<classpathentry kind="lib" path="swing2swt.jar"/>
 	<classpathentry kind="lib" path="swt-grouplayout.jar" sourcepath="swt-grouplayout.zip"/>
 	<classpathentry kind="lib" path="lib/date4j.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding_1.3.100.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.source_1.3.100.I20100601-0800.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.beans_1.2.100.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.beans.source_1.2.100.I20100601-0800.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.observable_1.3.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.observable.source_1.3.0.I20100601-0800.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.property_1.3.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.property.source_1.3.0.I20100601-0800.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.jface.databinding_1.4.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.jface.databinding.source_1.4.0.I20100601-0800.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

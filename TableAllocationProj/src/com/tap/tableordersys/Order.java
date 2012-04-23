@@ -20,33 +20,97 @@ public class Order {
 	
 	protected int state;
 	 
-	protected Operator operator;
+	protected String operatorID;
 	 
 	protected Table table;
-	 
+	
+	private String guestID;
 	protected Guests gusets;
 	
+	public Order() {
+		super();
+	}
 	
+	public Order(String orderID) {
+		super();
+		this.orderID = orderID;
+	}
 	
 	public Order(String orderID, Operator operator, Table table, Guests gusets) {
 		super();
 		this.orderID = orderID;
-		this.operator = operator;
+		this.operatorID = operator.getId();
 		this.table = table;
+		this.guestID = gusets.getId();
 		this.gusets = gusets;
 	}
 
 
 	public Order(Operator operator, Table table, Guests gusets) {
 		super();
-		this.operator = operator;
+		this.operatorID = operator.getId();
 		this.table = table;
+		this.guestID = gusets.getId();
 		this.gusets = gusets;
 		this.state = Status.ORDER_STATE_INIT.getValue();
 	}
 
 	
 	
+	public String getOrderID() {
+		return orderID;
+	}
+
+
+	public void setOrderID(String orderID) {
+		this.orderID = orderID;
+	}
+
+
+	public String getOperatorID() {
+		return operatorID;
+	}
+
+
+	public void setOperator(Operator operator) {
+		this.operatorID = operator.getId();
+	}
+
+
+	public Table getTable() {
+		return table;
+	}
+
+
+	public void setTable(Table table) {
+		this.table = table;
+	}
+
+
+	public Guests getGusets() {
+		return gusets;
+	}
+
+
+	public void setGusets(Guests gusets) {
+		if(gusets!=null)
+			this.guestID = gusets.getId();
+		this.gusets = gusets;
+	}
+
+
+	public String getGuestID() {
+		return guestID;
+	}
+
+	public void setGuestID(String guestID) {
+		this.guestID = guestID;
+	}
+
+	public void setOperatorID(String operatorID) {
+		this.operatorID = operatorID;
+	}
+
 	/**
 	 * change state to STATE_ORDERD
 	 * (only if state is in STATE_INIT or STATE_ORDERD)
@@ -117,7 +181,7 @@ public class Order {
 	@Override
 	public String toString() {
 		return "Order [orderID=" + orderID + ", state=" + state + ", operator="
-				+ operator + ", table=" + table + ", gusets=" + gusets + "]";
+				+ operatorID + ", table=" + table.getId() + ", gusets=" + gusets.getId() + "]";
 	}
 	
 	

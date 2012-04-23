@@ -1,6 +1,7 @@
 package com.tap.tableordersys;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.tap.locinfo.Status;
@@ -11,6 +12,12 @@ public class Restaurant{
 	private String name;
 	 
 	private List<Table> tableList;
+	
+	public Restaurant(String name) {
+		super();
+		this.name = name;
+		this.tableList = new LinkedList<Table>();
+	}
 
 	public Restaurant(String name, List<Table> tableList) {
 		super();
@@ -46,6 +53,16 @@ public class Restaurant{
 	public String getName() {
 		return this.name;
 	}
+	
+	public Guests findGuestInResturant(String guestsID){
+		Guests g;
+		for(Table t:this.tableList){
+			g = t.findGuestInTable(guestsID);
+			if(null!=g)
+				return g;
+		}
+		return null;
+	}
 	 
 	public int emptyTableList() {
 		this.tableList.clear();
@@ -55,5 +72,33 @@ public class Restaurant{
 	public List<Table> getTableList() {
 		return tableList;
 	}
+	
+	/**
+	 * copy except name
+	 * @param r
+	 */
+	public void copy(Restaurant r){
+		this.tableList = r.tableList;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Restaurant){
+			Restaurant r = (Restaurant) obj;
+			return this.name.equals(r);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.name.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "Restaurant [name=" + name + ", tableList=" + tableList + "]";
+	}
+	
 }
  

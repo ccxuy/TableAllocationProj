@@ -1,30 +1,47 @@
 package com.tap.bizlogic;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import com.tap.datastorage.DataControl;
+import com.tap.locinfo.Setting;
+import com.tap.locinfo.Status;
+import com.tap.tableordersys.BookOrder;
 import com.tap.tableordersys.Guests;
 import com.tap.tableordersys.Order;
 import com.tap.tableordersys.Restaurant;
 import com.tap.tableordersys.Table;
+import com.tap.tableordersys.WaitingList;
 import com.tap.usersys.Operator;
 
 public class OrderLogic {
-	/*
+	public boolean change = false;
+	Restaurant restaurant;
+	WaitingList waitList;
+
+	public OrderLogic() {
+		this.restaurant = new Restaurant(Setting.resturantName);
+	}
+	
+	public OrderLogic(Restaurant restaurant) {
+		this.restaurant = restaurant;
+		loadResturant(restaurant.getName());
+		WaitingList waitList = new WaitingList(restaurant.getName());
+	}
+	
+	
+	/**
 	 * 向固定饭店的某个restaurant 添加order
 	 * param需要提前定义好
-	 */
-	/**
 	 * @param operator
 	 * @param gusets
 	 * @param restaurant
 	 * @return
 	 */
-	public boolean addAnOrder(Operator operator, Guests gusets,
-			Restaurant restaurant) {
-		ObjectContainer db = Db4oEmbedded.openFile(
-				Db4oEmbedded.newConfiguration(), "auto.db");
+	public boolean addOrder(Operator operator, Guests gusets) {
+		
 		// table需要提前设置好  添加到waitinglist部分待完善waitinglist  order需要一个可以将id初始化的constructor或者id直接被自动初始化
 		int numOfPeople = gusets.getAmount();
 		//如果不需要拼桌
@@ -47,7 +64,7 @@ public class OrderLogic {
 		}//while
 			//允许拼桌
 			if(numOfPeople>0&&gusets.isSeatAlone()==false){
-				tableCheck = getTableWiehMaxCapacity(restaurant);
+				tableCheck = getTableWithMaxCapacity(restaurant);
 				// assign table
 				while(numOfPeople>0&&tableCheck.countGuestNumberInTable()<tableCheck.getCapacity()){		
 					//设置这个table的guest 比较需要分配的人和此桌剩余的位置
@@ -62,7 +79,7 @@ public class OrderLogic {
 					//order 存入数据库
 					//TODO
 					//存好一次后马上再check一次有没有新的table可以sign 
-					if(numOfPeople>0){tableCheck = getTableWiehMaxCapacity(restaurant);}
+					if(numOfPeople>0){tableCheck = getTableWithMaxCapacity(restaurant);}
 				}
 			}
 			//不允许拼桌
@@ -92,11 +109,13 @@ public class OrderLogic {
 		return null;
 	}
 	
-	/*
+	/**
 	 * 需要拼桌的时候
 	 * 得到当前剩余最多位置的table
+	 * @param restaurant
+	 * @return
 	 */
-	public Table getTableWiehMaxCapacity(Restaurant restaurant){
+	public Table getTableWithMaxCapacity(Restaurant restaurant){
 		List<Table> tablelist = restaurant.getTableList();
 		Table t;
 		int maxIndex = 0;
@@ -116,41 +135,205 @@ public class OrderLogic {
 		return null;
 	}
 	
-	/*
-	 * 到现场之后查询order
-	 */
 	/**
+	 * 到现场之后查询order
 	 * @return
 	 */
-	public Order searchOrder(){
+	public Order searchOrder(Order o){
 		//查询到之后return order
-		//TODO
-		return null;
+		ObjectContainer db = DataControl.getOCDB();
+		try{
+			List<Order> oplist = db.queryByExample( o );
+			if( 1==oplist.size() ){
+				//throw new Exception("Database have dupilicate entities for login user!");
+				return oplist.get(0);
+			}else{
+				System.err.println("No Order in DB like :"+o);
+				return null;
+			}
+		}finally{
+			db.close();
+		}
 	}
 
-	/*
-	 * 修改Order在数据库中的状态
-	 */
 	/**
+	 * 修改Order在数据库中的状态
 	 * @param o
 	 * @param orderState
 	 * @return
 	 */
-	public boolean modifyAnOrderState(Order o, int orderState) {
+	public boolean createOrModifyOrderState(Order o, int orderState) {
 		//查询到之后直接存储成功return true
-		//TODO
-		return false;
+		ObjectContainer db = DataControl.getOCDB();
+		try{
+			List<Order> oplist = db.queryByExample( o );
+			if(1==oplist.size()){
+				System.out.println("Saved: "+o);
+				return true;
+			}else if(1<oplist.size()){
+				//throw new Exception("Database have dupilicate entities for login user!");
+				System.err.println("Exist following Order:");
+				for(Order order:oplist){
+					System.err.println("\t"+order);
+				}
+				return false;
+			}else{
+				System.out.println("New: "+o);
+				db.store(o);
+				return true;
+			}
+		}finally{
+			db.close();
+		}
 	}
 
-	/*
-	 * 从数据库里删除一个Order order cancel_int db.delete()
-	 */
 	/**
+	 * 从数据库里删除一个Order order cancel_int db.delete()
 	 * @return
 	 */
-	public boolean cancelAnOrders() {
+	public boolean cancelOrder(Order o) {
 		//查询数据库找到即可删除
-		//TODO
-		return false;
+		ObjectContainer db = DataControl.getOCDB(Restaurant.class);
+		try{
+			List<Order> oplist = db.queryByExample( new Order(o.getOrderID()) );
+			if(0<oplist.size()){
+				System.out.println("The following order deleted:");
+				for(Order order: oplist){
+					db.delete(order);
+				}
+				System.out.println(oplist);
+				return true;
+			}else{
+				System.err.println("No matched Order found!");
+				return false;
+			}
+		}finally{
+			db.close();
+		}
+	}
+	public List<Table> getTablesOfResturant(){
+		return getTablesOfResturant(this.restaurant.getName());
+	}
+	public List<Table> getTablesOfResturant(String resturantName){
+		ObjectContainer db = DataControl.getOCDB(Restaurant.class);
+		try{
+			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
+			if(1==oplist.size()){
+				Restaurant r = oplist.get(0);
+				return r.getTableList();
+			}else{
+				System.err.println("Error on getOrdersOfResturant!");
+				return null;
+			}
+		}finally{
+			db.close();
+		}
+	}
+	
+	public void loadResturant(String restaurantName){
+		this.restaurant = RestaurantLogic.getRestaurant(restaurantName);
+	}
+	public List<Order> getOrdersOfResturant(){
+		return getOrdersOfResturant(this.restaurant.getName());
+	}
+	public List<Order> getOrdersOfResturant(String resturantName){
+		ObjectContainer db = DataControl.getOCDB(Restaurant.class);
+		try{
+			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
+			if(1==oplist.size()){
+				Restaurant r = oplist.get(0);
+				LinkedList<Order> oList = new LinkedList<Order>();
+				for(Table t:r.getTableList()){
+					oList.addAll(t.getOrderList());
+				}
+				for(Order or:oList){
+					String gid = or.getGuestID();
+					List<Guests> glist = db.queryByExample( new Guests(gid) );
+					or.setGusets(glist.get(0));
+				}
+				System.out.println("Orders are:"+oList);
+				return oList;
+			}else if(0==oplist.size()){
+				System.err.println("No resterant in database!");
+				return null;
+			}else{
+				System.err.println("Error on getOrdersOfResturant!");
+				return null;
+			}
+		}finally{
+			db.close();
+		}
+	}
+
+	public List<BookOrder> getBookOrdersOfResturant(){
+		return getBookOrdersOfResturant(restaurant.getName());
+	}
+	public List<BookOrder> getBookOrdersOfResturant(String resturantName) {
+		ObjectContainer db = DataControl.getOCDB(Restaurant.class);
+		try{
+			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
+			if(1==oplist.size()){
+				Restaurant r = oplist.get(0);
+				LinkedList<BookOrder> oList = new LinkedList<BookOrder>();
+				for(Table t:r.getTableList()){
+					oList.addAll(t.getBookOrderList());
+				}
+				for(BookOrder or:oList){
+					String gid = or.getGuestID();
+					List<Guests> glist = db.queryByExample( new Guests(gid) );
+					or.setGusets(glist.get(0));
+				}
+				System.out.println("BookOrder are:"+oList);
+				return oList;
+			}else if(0==oplist.size()){
+				System.err.println("No resterant in database!");
+				return null;
+			}else{
+				System.err.println("Error on getOrdersOfResturant!");
+				return null;
+			}
+		}finally{
+			db.close();
+		}
+	}
+
+	public WaitingList getWaitingListOfResturant(){
+		return getWaitingListOfResturant(restaurant.getName());
+	}
+	public WaitingList getWaitingListOfResturant(String restaurantName) {
+		ObjectContainer db = DataControl.getOCDB(WaitingList.class);
+		try{
+			List<WaitingList> oplist = db.queryByExample( new WaitingList(restaurantName) );
+			if(1==oplist.size()){
+				WaitingList r = oplist.get(0);
+				return r;
+			}else if(0==oplist.size()){
+				System.err.println("No waiting list in database!");
+				return null;
+			}else{
+				System.err.println("More than one waiting list in database!");
+				WaitingList r = oplist.get(0);
+				return r;
+			}
+		}finally{
+			db.close();
+		}
+	}
+
+	public Order newCustomer(Guests guests) {
+		Guests g = this.restaurant.findGuestInResturant(guests.getId());
+		if(null==g){
+			if( null==this.waitList.findGuests(guests.getId()) ){
+				//NO such guests exist, START to allocate table or waiting list
+				return null;
+			}else{
+				System.err.println("newCustomer: guest already waiting, try another id");
+				return null;
+			}
+		}else{
+			System.err.println("newCustomer: guest already ordered, try another id");
+			return null;
+		}
+		
 	}
 }

@@ -1,5 +1,6 @@
 package com.tap.tableordersys;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.tap.locinfo.Status;
@@ -17,6 +18,10 @@ public class Table {
 	 
 	private int capacity;
 	 
+	/**
+	 * Only can use for DB!
+	 * @param id
+	 */
 	public Table(String id) {
 		super();
 		this.id = id;
@@ -25,7 +30,9 @@ public class Table {
 	public Table(String id, int capacity) {
 		super();
 		this.id = id;
-		this.capacity = capacity;
+		this.orderList = new LinkedList<Order>();
+		this.bookOrderList = new LinkedList<BookOrder>();
+		this.capacity = 0;
 	}
 
 	public Table(String id, List orderList, List bookOrderList, int capacity) {
@@ -35,7 +42,7 @@ public class Table {
 		this.bookOrderList = bookOrderList;
 		this.capacity = capacity;
 	}
-	 
+	
 	public String getId() {
 		return id;
 	}
@@ -45,13 +52,36 @@ public class Table {
 	}
 
 	public int addOrder(Order o) {
-		this.orderList.add(o);
-		return Status.SUCCESS.getValue();
+		if(null!=o){
+			this.orderList.add(o);
+			return Status.SUCCESS.getValue();
+		}else{
+			return Status.FAIL.getValue();
+		}
 	}
-	 
+	
+	public int addBookOrder(BookOrder o) {
+		if(null!=o){
+			this.orderList.add(o);
+			return Status.SUCCESS.getValue();
+		}else{
+			return Status.FAIL.getValue();
+		}
+	}
+
 	public int cancelOrder(Order order) {
 		int res = Status.FAIL.getValue();
 		for(Order o: this.orderList){
+			if( o.equals(order) ){
+				o.cancel();
+				res = Status.SUCCESS.getValue();
+			}
+		}
+		return res;
+	}
+	public int cancelBookOrder(BookOrder order) {
+		int res = Status.FAIL.getValue();
+		for(BookOrder o: this.bookOrderList){
 			if( o.equals(order) ){
 				o.cancel();
 				res = Status.SUCCESS.getValue();
@@ -79,7 +109,20 @@ public class Table {
 	public int getCapacity() {
 		return capacity;
 	}
+	public String getCapacityString() {
+		return (new Integer(capacity)).toString();
+	}
 
+	public Guests findGuestInTable(String guestsID){
+		for(Order o:this.orderList){
+			if(o.getGusets().getId().equals(guestsID)
+					||o.getGuestID().equals(guestsID)){
+				return o.gusets;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Add up all order that are ordered in this table
 	 * @return how many guest in this table
@@ -128,8 +171,9 @@ public class Table {
 
 	@Override
 	public String toString() {
-		// [TODO] Auto-generated method stub
-		return super.toString();
+		return "Table [id=" + id + ", name=" + name + ", orderList="
+				+ orderList + ", bookOrderList=" + bookOrderList
+				+ ", capacity=" + capacity + "]";
 	}
 }
  

@@ -2,7 +2,7 @@ package com.tap.tableordersys;
 
 public class Guests {
  
-	private int id;
+	private String id;
 	 
 	private String addtionalInfo;
 	 
@@ -10,19 +10,20 @@ public class Guests {
 	 
 	private boolean seatAlone;
 
-	public Guests(int id) {
+	public Guests(String id) {
 		super();
 		this.id = id;
 	}
 
-	public Guests(String addtionalInfo, int amount, boolean seatAlone) {
+	public Guests(String id, int amount, boolean seatAlone) {
 		super();
-		this.addtionalInfo = addtionalInfo;
+		this.id = id;
+		this.addtionalInfo = "";
 		this.amount = amount;
 		this.seatAlone = seatAlone;
 	}
 	
-	public Guests(int id, String addtionalInfo, int amount, boolean seatAlone) {
+	public Guests(String id, String addtionalInfo, int amount, boolean seatAlone) {
 		super();
 		this.id = id;
 		this.addtionalInfo = addtionalInfo;
@@ -41,6 +42,9 @@ public class Guests {
 	public int getAmount() {
 		return amount;
 	}
+	public String getAmountString() {
+		return (new Integer(getAmount())).toString();
+	}
 
 	public void setAmount(int amount) {
 		this.amount = amount;
@@ -49,12 +53,20 @@ public class Guests {
 	public boolean isSeatAlone() {
 		return seatAlone;
 	}
+	
+	public boolean getSeatAlone(){
+		return seatAlone;
+	}
 
+	public String getSeatAloneString(){
+		return (new Boolean(getSeatAlone())).toString();
+	}
+	
 	public void setSeatAlone(boolean seatAlone) {
 		this.seatAlone = seatAlone;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -68,14 +80,14 @@ public class Guests {
 	public boolean equals(Object obj) {
 		if( obj instanceof Guests){
 			Guests o = (Guests) obj;
-			return this.id == o.id;
+			return this.id.equals(o.id);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.id;
+		return this.id.hashCode();
 	}
 	
 }

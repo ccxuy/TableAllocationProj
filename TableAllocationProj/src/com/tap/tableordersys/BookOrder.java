@@ -45,7 +45,17 @@ public class BookOrder extends Order {
 		}
 		return false;
 	}
+	
+	
 	 
+	public DateTime getBookTime() {
+		return bookTime;
+	}
+
+	public void setBookTime(DateTime bookTime) {
+		this.bookTime = bookTime;
+	}
+
 	/**
 	 * @return Status of this command, ok if Status.SUCCESS.getValue()
 	 */
@@ -57,7 +67,7 @@ public class BookOrder extends Order {
 	@Override
 	public String toString() {
 		return "BookOrder [ orderID=" + orderID
-				+ ", state=" + state + ",bookTime=" + bookTime + ", operator=" + operator + ", table="
+				+ ", state=" + state + ",bookTime=" + bookTime + ", operator=" + operatorID + ", table="
 				+ table + ", gusets=" + gusets + "]";
 	}
 	

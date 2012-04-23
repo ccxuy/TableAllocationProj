@@ -2185,8 +2185,9 @@ public class RibbonGroup extends Canvas implements MouseMoveListener, MouseListe
 	
 	public void setVisible(boolean visible) {
 		mVisible = visible;
+		super.setVisible(visible);
 	}
-	
+
 	public void addSelectionListener(SelectionListener listener) {
 		if (!mSelectionListeners.contains(listener))
 			mSelectionListeners.add(listener);

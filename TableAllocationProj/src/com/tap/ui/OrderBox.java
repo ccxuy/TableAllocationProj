@@ -1,21 +1,17 @@
 package com.tap.ui;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import com.tap.tableordersys.BookOrder;
 import com.tap.tableordersys.Order;
 
-public class OrderDialog extends Dialog {
-
+public class OrderBox {
 	protected Object result;
-	protected Shell shell;
 	private Text text;
 	private Text text_1;
 	private Text text_2;
@@ -24,43 +20,45 @@ public class OrderDialog extends Dialog {
 	private Text text_5;
 	
 	private Order order;
+	
+	protected Shell shell;
 
 	/**
-	 * Create the dialog.
-	 * @param parent
-	 * @param style
+	 * Launch the application.
+	 * @param args
 	 */
-	public OrderDialog(Shell parent, Order o) {
-		super(parent, SWT.INHERIT_DEFAULT);
-		setText("SWT Dialog");
-		this.order = o;
+	public static void main(String[] args) {
+		try {
+			OrderBox window = new OrderBox();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * Open the dialog.
-	 * @return the result
+	 * Open the window.
 	 */
-	public Object open() {
+	public void open() {
+		Display display = Display.getDefault();
 		createContents();
 		shell.open();
 		shell.layout();
-		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		return result;
 	}
 
 	/**
-	 * Create contents of the dialog.
+	 * Create contents of the window.
 	 */
-	private void createContents() {
-		shell = new Shell(getParent(), getStyle());
-		shell.setSize(266, 268);
-		shell.setText("Order");
-		
+	protected void createContents() {
+		shell = new Shell();
+		shell.setSize(450, 300);
+		shell.setText("View order");
+
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setBounds(33, 39, 61, 17);
 		lblNewLabel.setText("ID:");
@@ -115,4 +113,5 @@ public class OrderDialog extends Dialog {
 		btnConfirm.setBounds(83, 250, 80, 27);
 		btnConfirm.setText("Confirm");
 	}
+
 }

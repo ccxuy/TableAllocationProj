@@ -24,6 +24,7 @@ public class RibbonTab {
 	private boolean mHover;
 	private boolean mSelected;
 	private int mIndex;
+	private boolean mVisible = true;
 	
 	private RibbonTabComposite mFancyToolbar;
 	private RibbonTabFolder mFancyTabFolder;
@@ -36,7 +37,28 @@ public class RibbonTab {
 		ftf.tabAdded(this);
 		ftf.tabControlSet(this);
 	}
-	
+	public void setVisible(boolean visible){
+		mFancyToolbar.setVisible(visible);
+		this.mVisible = visible;
+		/*for(Control c:mFancyToolbar.getChildren()){
+			c.setVisible(false);
+		}*/
+	}
+	public boolean getVisible(){
+		return mVisible;
+	}
+	public void enable(){
+		mFancyToolbar.setEnabled(true);
+		for(Control c:mFancyToolbar.getChildren()){
+			c.setEnabled(true);
+		}
+	}
+	public void disable(){
+		mFancyToolbar.setEnabled(false);
+		for(Control c:mFancyToolbar.getChildren()){
+			c.setEnabled(false);
+		}
+	}
 	public boolean isEmpty() {
 		Control [] children = mFancyToolbar.getChildren();		
 		return (children == null || children.length == 0);	

@@ -20,6 +20,15 @@ public class NewTableDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
+	public NewTableDialog(Shell parent) {
+		super(parent, SWT.INHERIT_DEFAULT);
+		setText("New Table Dialog");
+	}
+	/**
+	 * Create the dialog.
+	 * @param parent
+	 * @param style
+	 */
 	public NewTableDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("New Table Dialog");
