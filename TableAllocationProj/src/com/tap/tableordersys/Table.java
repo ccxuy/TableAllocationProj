@@ -32,7 +32,7 @@ public class Table {
 		this.id = id;
 		this.orderList = new LinkedList<Order>();
 		this.bookOrderList = new LinkedList<BookOrder>();
-		this.capacity = 0;
+		this.capacity = capacity;
 	}
 
 	public Table(String id, List orderList, List bookOrderList, int capacity) {
@@ -137,6 +137,9 @@ public class Table {
 		return num;
 	}
 	public void setCapacity(int capacity) {
+		if(capacity<=0){
+			System.err.println("Table setCapacity <= 0");
+		}
 		this.capacity = capacity;
 	}
 
@@ -171,8 +174,8 @@ public class Table {
 
 	@Override
 	public String toString() {
-		return "Table [id=" + id + ", name=" + name + ", orderList="
-				+ orderList + ", bookOrderList=" + bookOrderList
+		return "Table [id=" + id + ", name=" + name + ", orderListSize="
+				+ orderList.size() + ", bookOrderListSize=" + bookOrderList.size()
 				+ ", capacity=" + capacity + "]";
 	}
 }

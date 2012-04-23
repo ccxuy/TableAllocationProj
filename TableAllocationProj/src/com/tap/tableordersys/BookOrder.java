@@ -17,11 +17,13 @@ public class BookOrder extends Order {
 	public BookOrder(String orderID, Operator operator, Table table,
 			Guests gusets, DateTime bookTime) {
 		super(orderID, operator, table, gusets);
+		this.state = STATE_INIT;
 		this.bookTime = bookTime;
 	}
 
 	public BookOrder(Operator operator, Table table, Guests gusets, DateTime bookTime) {
 		super(operator, table, gusets);
+		this.state = STATE_INIT;
 		this.bookTime = bookTime;
 	}
 	

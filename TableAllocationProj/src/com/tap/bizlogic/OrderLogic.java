@@ -18,20 +18,43 @@ import com.tap.usersys.Operator;
 
 public class OrderLogic {
 	public boolean change = false;
+	Operator operator;
 	Restaurant restaurant;
 	WaitingList waitList;
+	List<Order> lastOrders;
 
 	public OrderLogic() {
 		this.restaurant = new Restaurant(Setting.resturantName);
-	}
-	
-	public OrderLogic(Restaurant restaurant) {
-		this.restaurant = restaurant;
 		loadResturant(restaurant.getName());
-		WaitingList waitList = new WaitingList(restaurant.getName());
+		loadWaitingList(restaurant.getName());
+		lastOrders = new LinkedList<Order>();
+	}
+	
+	public OrderLogic(Operator o) {
+		this.restaurant = new Restaurant(Setting.resturantName);
+		this.operator = o;
+		loadResturant(restaurant.getName());
+		loadWaitingList(restaurant.getName());
+		lastOrders = new LinkedList<Order>();
+	}
+	
+	public OrderLogic(Restaurant restaurant, Operator o) {
+		this.restaurant = restaurant;
+		this.operator = o;
+		loadResturant(restaurant.getName());
+		loadWaitingList(restaurant.getName());
+		lastOrders = new LinkedList<Order>();
 	}
 	
 	
+	public Operator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(Operator o) {
+		this.operator = o;
+	}
+
 	/**
 	 * 向固定饭店的某个restaurant 添加order
 	 * param需要提前定义好
@@ -40,55 +63,70 @@ public class OrderLogic {
 	 * @param restaurant
 	 * @return
 	 */
-	public boolean addOrder(Operator operator, Guests gusets) {
-		
-		// table需要提前设置好  添加到waitinglist部分待完善waitinglist  order需要一个可以将id初始化的constructor或者id直接被自动初始化
+	public boolean addOrder(Guests gusets) {
+		lastOrders.clear();
 		int numOfPeople = gusets.getAmount();
-		//如果不需要拼桌
-			Table tableCheck = checkNewTableExist(restaurant);
-			// assign table
-			while(numOfPeople>0&&tableCheck!=null){			
-			//设置这个table的guest
-			if(numOfPeople>tableCheck.getCapacity()){
-			gusets.setAmount(tableCheck.getCapacity());
-			}else{gusets.setAmount(numOfPeople);}
-			Order o = new Order(operator, tableCheck, gusets);
-			//设置好table的list
+		Table tableCheck = checkNewTableExist(restaurant);
+		
+		System.out.println("assigning table");
+		Order o;
+		while (numOfPeople > 0 && tableCheck != null && tableCheck.getCapacity()>0) {
+			System.out.println("numOfPeople: "+numOfPeople+"\t"+tableCheck);
+			if (numOfPeople > tableCheck.getCapacity()) {
+				gusets.setAmount(tableCheck.getCapacity());
+				numOfPeople = numOfPeople - tableCheck.getCapacity();
+			} else {
+				gusets.setAmount(numOfPeople);
+				numOfPeople = 0;
+			}
+			o = new Order(operator, tableCheck, gusets);
+			o.checkIn();
+			this.lastOrders.add(o);
 			tableCheck.getOrderList().add(o);
-			//减去已经放进一个talbe里的人数
-			numOfPeople = numOfPeople-tableCheck.getCapacity();
-			//order 存入数据库
-			//TODO
-			//存好一次后马上再check一次有没有新的table可以sign 
-			if(numOfPeople>0){tableCheck = checkNewTableExist(restaurant);}
-		}//while
-			//允许拼桌
-			if(numOfPeople>0&&gusets.isSeatAlone()==false){
-				tableCheck = getTableWithMaxCapacity(restaurant);
-				// assign table
-				while(numOfPeople>0&&tableCheck.countGuestNumberInTable()<tableCheck.getCapacity()){		
-					//设置这个table的guest 比较需要分配的人和此桌剩余的位置
-					if(numOfPeople>(tableCheck.getCapacity()-tableCheck.countGuestNumberInTable())){
-					gusets.setAmount((tableCheck.getCapacity()-tableCheck.countGuestNumberInTable()));
-					}else{gusets.setAmount(numOfPeople);}
-					Order o = new Order(operator, tableCheck, gusets);
-					//设置好table的list
-					tableCheck.getOrderList().add(o);
-					//减去已经放进一个talbe里的人数
-					numOfPeople = numOfPeople-(tableCheck.getCapacity()-tableCheck.countGuestNumberInTable());
-					//order 存入数据库
-					//TODO
-					//存好一次后马上再check一次有没有新的table可以sign 
-					if(numOfPeople>0){tableCheck = getTableWithMaxCapacity(restaurant);}
+			
+			if (numOfPeople > 0) 
+				tableCheck = checkNewTableExist(restaurant);
+		}
+		
+		System.out.println("dispatching table");
+		if (numOfPeople > 0 && gusets.isSeatAlone() == false) {
+			
+			tableCheck = getTableWithMaxCapacity(restaurant);
+			while (numOfPeople > 0 && tableCheck!=null
+					&& tableCheck.countGuestNumberInTable() < tableCheck.getCapacity()) {
+				
+				if (numOfPeople > (tableCheck.getCapacity() - tableCheck.countGuestNumberInTable())) {
+					gusets.setAmount(tableCheck.getCapacity() - tableCheck.countGuestNumberInTable());
+					numOfPeople = numOfPeople - (tableCheck.getCapacity() - tableCheck.countGuestNumberInTable());
+				} else {
+					gusets.setAmount(numOfPeople);
+					numOfPeople = 0;
+				}
+				o = new Order(operator, tableCheck, gusets);
+				o.checkIn();
+				this.lastOrders.add(o);
+				tableCheck.getOrderList().add(o);
+
+				numOfPeople = numOfPeople
+						- (tableCheck.getCapacity() - tableCheck
+								.countGuestNumberInTable());
+				
+				
+				if (numOfPeople > 0) {
+					tableCheck = getTableWithMaxCapacity(restaurant);
 				}
 			}
-			//不允许拼桌
-			if(numOfPeople>0&&gusets.isSeatAlone()==true){
-			gusets.setAmount(numOfPeople);
-			//加入到waitinglist
 		}
-		//default
-		return false;
+		RestaurantLogic.saveRestauant(restaurant);
+		
+		gusets.setAmount(numOfPeople);
+		this.waitList.addGuests(gusets);
+		saveWaitingList();
+		
+		if(this.lastOrders.size()>=0)
+			return true;
+		else
+			return false;
 	}
 
 	/*
@@ -233,6 +271,55 @@ public class OrderLogic {
 	public void loadResturant(String restaurantName){
 		this.restaurant = RestaurantLogic.getRestaurant(restaurantName);
 	}
+	public void loadWaitingList(String restaurantName) {
+		ObjectContainer db = DataControl.getOCDB(WaitingList.class);
+		try{
+			List<WaitingList> oplist = db.queryByExample( new WaitingList(restaurantName) );
+			if(1==oplist.size()){
+				this.waitList = oplist.get(0);
+				return;
+			}else if( oplist.size()<=0 ){
+				System.err.println("loadWaitingList can't load, use NEW one instead: "+restaurantName+" amount of waitingList:"+oplist.size());
+				this.waitList = new WaitingList(this.restaurant.getName());
+				return;
+			}else{
+				System.err.println("loadWaitingList dupicate, auto use first one: "+restaurantName+" amount of waitingList:"+oplist.size());
+				this.waitList = oplist.get(0);
+				return;
+			}
+		}finally{
+			db.close();
+		}
+	}
+	public void saveWaitingList(){
+		saveWaitingList(this.restaurant.getName());
+	}
+	public void saveWaitingList(String restaurantName) {
+		ObjectContainer db = DataControl.getOCDB(WaitingList.class);
+		try{
+			List<WaitingList> oplist = db.queryByExample( new WaitingList(restaurantName) );
+			WaitingList wList;
+			if(1==oplist.size()){
+				wList = oplist.get(0);
+				wList.setGuestList(this.waitList.getGuestList());
+				db.store(wList);
+				System.out.println("Save waiting list "+wList);
+				return;
+			}else if( oplist.size()<=0 ){
+				db.store(this.waitList);
+				return;
+			}else{
+				System.err.println("loadWaitingList dupicate, auto use first one: "+restaurantName+" amount of waitingList:"+oplist.size());
+				wList = oplist.get(0);
+				wList.setGuestList(this.waitList.getGuestList());
+				db.store(wList);
+				return;
+			}
+		}finally{
+			db.close();
+		}
+	}
+
 	public List<Order> getOrdersOfResturant(){
 		return getOrdersOfResturant(this.restaurant.getName());
 	}
@@ -242,15 +329,16 @@ public class OrderLogic {
 			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
 			if(1==oplist.size()){
 				Restaurant r = oplist.get(0);
+				db.activate(r, 20);
 				LinkedList<Order> oList = new LinkedList<Order>();
 				for(Table t:r.getTableList()){
 					oList.addAll(t.getOrderList());
 				}
-				for(Order or:oList){
+				/*for(Order or:oList){
 					String gid = or.getGuestID();
 					List<Guests> glist = db.queryByExample( new Guests(gid) );
 					or.setGusets(glist.get(0));
-				}
+				}*/
 				System.out.println("Orders are:"+oList);
 				return oList;
 			}else if(0==oplist.size()){
@@ -307,7 +395,7 @@ public class OrderLogic {
 			if(1==oplist.size()){
 				WaitingList r = oplist.get(0);
 				return r;
-			}else if(0==oplist.size()){
+			}else if( oplist.size()<1 ){
 				System.err.println("No waiting list in database!");
 				return null;
 			}else{
@@ -320,12 +408,22 @@ public class OrderLogic {
 		}
 	}
 
-	public Order newCustomer(Guests guests) {
+	public List<Order> newCustomer(Guests guests) {
+		if(null==guests){
+			System.err.println("newCustomer: null guests!");
+			return null;
+		}
 		Guests g = this.restaurant.findGuestInResturant(guests.getId());
 		if(null==g){
 			if( null==this.waitList.findGuests(guests.getId()) ){
-				//NO such guests exist, START to allocate table or waiting list
-				return null;
+				
+				boolean addedToTable = addOrder(guests);
+				if(addedToTable){
+					System.out.println("New Customer set new order:"+lastOrders);
+					return lastOrders;
+				}else{
+					return null;
+				}
 			}else{
 				System.err.println("newCustomer: guest already waiting, try another id");
 				return null;

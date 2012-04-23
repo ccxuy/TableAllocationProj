@@ -1,5 +1,7 @@
 package com.tap.tableordersys;
 
+import java.util.UUID;
+
 import com.tap.locinfo.Status;
 import com.tap.usersys.Operator;
 
@@ -36,6 +38,19 @@ public class Order {
 		this.orderID = orderID;
 	}
 	
+	public Order(Operator operator, Table table, Guests gusets, boolean ordered){
+		super();
+		this.operatorID = UUID.randomUUID().toString().substring(0,5);
+		this.operatorID = operator.getId();
+		this.table = table;
+		this.guestID = gusets.getId();
+		this.gusets = gusets;
+		if(ordered)
+			this.state = Status.ORDER_STATE_ORDERD.getValue();
+		else
+			this.state = Status.ORDER_STATE_INIT.getValue();
+	}
+	
 	public Order(String orderID, Operator operator, Table table, Guests gusets) {
 		super();
 		this.orderID = orderID;
@@ -43,16 +58,18 @@ public class Order {
 		this.table = table;
 		this.guestID = gusets.getId();
 		this.gusets = gusets;
+		this.state = Status.ORDER_STATE_ORDERD.getValue();
 	}
 
 
 	public Order(Operator operator, Table table, Guests gusets) {
 		super();
+		this.operatorID = UUID.randomUUID().toString().substring(0,5);
 		this.operatorID = operator.getId();
 		this.table = table;
 		this.guestID = gusets.getId();
 		this.gusets = gusets;
-		this.state = Status.ORDER_STATE_INIT.getValue();
+		this.state = Status.ORDER_STATE_ORDERD.getValue();
 	}
 
 	

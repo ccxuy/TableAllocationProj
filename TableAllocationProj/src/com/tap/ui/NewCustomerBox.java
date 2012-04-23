@@ -1,5 +1,6 @@
 package com.tap.ui;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.swt.events.SelectionEvent;
@@ -12,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 
+import com.hexapixel.widgets.generic.Utils;
 import com.tap.bizlogic.OrderLogic;
 import com.tap.tableordersys.Guests;
 import com.tap.tableordersys.Order;
@@ -66,6 +68,7 @@ public class NewCustomerBox {
 		shell = new Shell();
 		shell.setSize(340, 286);
 		shell.setText("New customer");
+		Utils.centerDialogOnScreen(shell);
 		
 		Label lblGuestId = new Label(shell, SWT.NONE);
 		lblGuestId.setBounds(33, 42, 61, 17);
@@ -108,26 +111,30 @@ public class NewCustomerBox {
 			try{
 			amount = new Integer(text_1.getText());
 			if(amount<=0){
-				MessageBox msgBox = new MessageBox(shell, SWT.INHERIT_DEFAULT);
+				MessageBox msgBox = new MessageBox(shell, 1);
 				msgBox.setMessage("How can you have so \"MANY\" people?");
 				msgBox.open();
 				return;
 			}
 			}catch (NumberFormatException e) {
 				System.err.println(e.getMessage());
-				MessageBox msgBox = new MessageBox(shell, SWT.INHERIT_DEFAULT);
+				MessageBox msgBox = new MessageBox(shell, 1);
 				msgBox.setMessage("Wrong amount input!");
 				msgBox.open();
 				return;
 			}
-			Order o = orderLogic.newCustomer(new Guests(text.getText(),text_2.getText() ,amount , btnAllowSeatTogether.getSelection()));
+			List<Order> o = orderLogic.newCustomer(new Guests(text.getText(),text_2.getText() ,amount , btnAllowSeatTogether.getSelection()));
 			
 			if(null!=o){
-				MessageBox msgBox = new MessageBox(shell, SWT.INHERIT_DEFAULT);
-				msgBox.setMessage("Customer occupied table of "+o.getTable().getId());
+				MessageBox msgBox = new MessageBox(shell, 2);
+				StringBuffer msgContent = new StringBuffer();
+				for(Order or:o){
+					msgContent.append(" "+or.getTable().getId());
+				}
+				msgBox.setMessage("Customer occupied table of "+msgContent);
 				msgBox.open();
 			}else{
-				MessageBox msgBox = new MessageBox(shell, SWT.INHERIT_DEFAULT);
+				MessageBox msgBox = new MessageBox(shell, 2);
 				msgBox.setMessage("Customer should wait until table avalable.");
 				msgBox.open();
 			}

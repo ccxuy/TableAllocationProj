@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.db4o.ObjectContainer;
 import com.tap.datastorage.DataControl;
+import com.tap.locinfo.Setting;
 import com.tap.tableordersys.Order;
 import com.tap.tableordersys.Restaurant;
 import com.tap.usersys.Operator;
@@ -57,7 +58,9 @@ public class RestaurantLogic {
 		try{
 			List<Restaurant> oplist = db.queryByExample( new Restaurant(restaurantName) );
 			if(1==oplist.size()){
-				return oplist.get(0);
+				Restaurant r = oplist.get(0);
+				db.activate(r, Setting.defaultDBLoadingDepth);
+				return r;
 			}else{
 				System.err.println("Error in getRestaurant: "+restaurantName+" found:"+oplist.size());
 				return null;

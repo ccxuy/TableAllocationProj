@@ -507,13 +507,15 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
+			Operator op = null;
 			try {
-				opLogic.login(loginIDText.getText(), loginPWText.getText());
+				op = opLogic.login(loginIDText.getText(), loginPWText.getText());
 			} catch (Exception e) {
 				// [TODO] Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(opLogic.isLogined()){
+				orderLogic.setOperator(op);
 				msgBox.setMessage("Welcome back, "+opLogic.getCurrentOperator().getId());
 				msgBox.open();
 			}else{
@@ -554,13 +556,13 @@ public class MainUI {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Order","ID","Operator","Table ID","Guest ID","Guest amout"});
+			doGenerateTableColumn(new String[]{"Order","ID","Operator","Table ID","Guest ID","Guest amount"});
 			List<Order> orderList = orderLogic.getOrdersOfResturant();
 			if(null!=orderList)
 				for(Order order:orderList){
 					String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
 							,order.getTable().getId(),order.getGusets().getId()
-							,order.getGusets().getId()};
+							,order.getGusets().getAmountString()};
 					doGenerateTableItem(row);
 					for(String s: row)
 						System.out.print(s);
