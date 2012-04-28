@@ -63,7 +63,7 @@ public class WaitingList {
 		this.guestList = guestList;
 	}
 
-	//[TODO] 
+	//[TODO] doScanAvalableGuests
 	public List<Guests> doScanAvalableGuests() {
 		return null;
 	}

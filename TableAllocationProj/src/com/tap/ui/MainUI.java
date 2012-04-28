@@ -15,10 +15,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -46,6 +50,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.FlowLayout;
@@ -80,6 +85,7 @@ public class MainUI {
 	RibbonShell shell = null;
 	TableViewer tableViewer = null;
 	Table table = null;
+	TableCursor tCursor;
 	MessageBox msgBox = null;
 	//Home tab
 	RibbonTab ftHome = null;
@@ -236,15 +242,16 @@ public class MainUI {
 	private void doGenerateNewTableView(final Shell shell) {
 		if(null!=table){
 			table.dispose();
-			System.out.println("Create new Table.");
+			//System.out.println("Create new Table.");
 		}
 		tableViewer = new TableViewer(shell, SWT.CHECK | SWT.MULTI
 				| SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-
 		
 		table = tableViewer.getTable();
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+
+		tCursor = new TableCursor(table, SWT.NONE);
 		
 		table.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
@@ -274,9 +281,22 @@ public class MainUI {
 		}
 		//System.out.println("computeFormSizeForItem : "+top);
 	}
+	
 	private void doGenerateTableItem(String[] itemStrings) {
 		TableItem newTableItem = new TableItem(table, SWT.NONE);
 		newTableItem.setText(itemStrings);
+	}
+
+	/**
+	 * @param boxTypeOfListener
+	 * @param ti
+	 */
+	//[FIXME] ModifyBoxDCListenerForTable
+	private void doAddModifyBoxDCListenerToTable(String boxTypeOfListener) {
+		if(boxTypeOfListener.equalsIgnoreCase("Order")){
+			tCursor.addMouseListener(new tiModifyBoxListener());
+		}
+		
 	}
 
 	private void doGenerateTableColumn(String[] columnStrings) {
@@ -340,7 +360,7 @@ public class MainUI {
 
 	private void doGenerateOrderingTab(RibbonTab ftOrder) {
 		//Ordering
-        //[TODO] Ordering
+        //[DONE] Ordering
         //Order group 
         RibbonGroup rgOrder = new RibbonGroup(ftOrder, "Current");
         //new Image(null, "newOder.gif")
@@ -351,6 +371,7 @@ public class MainUI {
         RibbonButton rbNewOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "New Order", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "Modify Order", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbDelOrder = new RibbonButton(orderSub, ImageCache.getImage("olb_picture.gif"), "Delete Order", RibbonButton.STYLE_NO_DEPRESS);
+        rbNewOrder.addSelectionListener(new btNewCustomerListener());
         //end Order group
         
         //Booking group 
@@ -363,6 +384,7 @@ public class MainUI {
         RibbonButton rbNewBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "New Book", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Modify Book", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbDelBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Delete Book", RibbonButton.STYLE_NO_DEPRESS);
+        rbNewBook.addSelectionListener(new btNewBookingListener());
         //end Booking group
         
         //Wating List group 
@@ -381,7 +403,7 @@ public class MainUI {
 
 	private void doGenerateHomeTab(RibbonTab ftHome) {
 		// toolbar group
-        //[TODO] Account UI
+        //[DONE] Account UI
         tabGroupAccount = new RibbonGroup(ftHome, "Account");
         //Image loginImage = new Image(null, "image/loginButton.png");
         Image userImage = new Image(null, "image/user.png");
@@ -403,7 +425,7 @@ public class MainUI {
 		// end toolbar group
 		
 		// Login group
-        //[TODO] Login UI
+        //[DONE] Login UI
         tabGroupLogin = new RibbonGroup(ftHome, "Login");
         GridLayout glLogin = new GridLayout(1, false);
         glLogin.marginHeight = 7;
@@ -433,12 +455,15 @@ public class MainUI {
 		// end Login group
         
 		//Quick lunch
-		//[XXX]Quick lunch
+		//[DONE]Quick lunch
         tabGroupQuickLaunch = new RibbonGroup(ftHome, "Quick launch");
         // Button
         RibbonButton rbNewCutomer = new RibbonButton(tabGroupQuickLaunch, ImageCache.getImage("olb_picture.gif"), "New customer", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
         rbNewCutomer.addSelectionListener(new btNewCustomerListener());
         rbNewCutomer.setToolTip(new RibbonTooltip("Add new customer", "System will automatically allocate seat for the customer"));
+        RibbonButton rbNewBooking = new RibbonButton(tabGroupQuickLaunch, ImageCache.getImage("olb_picture.gif"), "New booking", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_NO_DEPRESS);
+        rbNewBooking.addSelectionListener(new btNewBookingListener());
+        rbNewBooking.setToolTip(new RibbonTooltip("Add new booking order", "System will automatically preserve the table for this order."));
         //end Quick lunch
         
         //end Home tab
@@ -511,7 +536,6 @@ public class MainUI {
 			try {
 				op = opLogic.login(loginIDText.getText(), loginPWText.getText());
 			} catch (Exception e) {
-				// [TODO] Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(opLogic.isLogined()){
@@ -535,7 +559,6 @@ public class MainUI {
 			try {
 				opLogic.logout();
 			} catch (Exception e) {
-				// [TODO] Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(false==opLogic.isLogined()){
@@ -558,16 +581,19 @@ public class MainUI {
 			doGenerateNewTableView(shell.getShell());
 			doGenerateTableColumn(new String[]{"Order","ID","Operator","Table ID","Guest ID","Guest amount"});
 			List<Order> orderList = orderLogic.getOrdersOfResturant();
-			if(null!=orderList)
+			if(null!=orderList){
 				for(Order order:orderList){
 					String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
 							,order.getTable().getId(),order.getGusets().getId()
 							,order.getGusets().getAmountString()};
 					doGenerateTableItem(row);
-					for(String s: row)
+					/*for(String s: row)
 						System.out.print(s);
-					System.out.println();
+					System.out.println();*/
 				}
+				doAddModifyBoxDCListenerToTable("Order");
+			}
+			
 			computeFormSizeForItem(shell.getShell());
 			doFuckingRefresh();
 		}
@@ -681,5 +707,39 @@ public class MainUI {
 			NewCustomerBox ntd = new NewCustomerBox(orderLogic);
 			ntd.open();
 		}
+	}
+	class btNewBookingListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			NewBookingBox ntd = new NewBookingBox(orderLogic);
+			ntd.open();
+		}
+	}
+	class btModifyOrderListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			NewBookingBox ntd = new NewBookingBox(orderLogic);
+			ntd.open();
+		}
+	}
+	/**
+	 * @author Andrew
+	 */
+	class tiModifyBoxListener implements MouseListener{
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			System.err.println("Double clicked!");
+			TableItem ti = tCursor.getRow();
+			OrderModifyBox ntd = new OrderModifyBox(new Order(ti.getText(1)));
+			ntd.open();
+		}
+		@Override
+		public void mouseDown(MouseEvent e) {}
+		@Override
+		public void mouseUp(MouseEvent e) {}
 	}
 }

@@ -40,7 +40,7 @@ public class Order {
 	
 	public Order(Operator operator, Table table, Guests gusets, boolean ordered){
 		super();
-		this.operatorID = UUID.randomUUID().toString().substring(0,5);
+		this.orderID = UUID.randomUUID().toString().substring(0,5);
 		this.operatorID = operator.getId();
 		this.table = table;
 		this.guestID = gusets.getId();
@@ -64,7 +64,7 @@ public class Order {
 
 	public Order(Operator operator, Table table, Guests gusets) {
 		super();
-		this.operatorID = UUID.randomUUID().toString().substring(0,5);
+		this.orderID = UUID.randomUUID().toString().substring(0,5);
 		this.operatorID = operator.getId();
 		this.table = table;
 		this.guestID = gusets.getId();

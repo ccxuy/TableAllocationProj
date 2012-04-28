@@ -105,7 +105,6 @@ public class MainViewComposite extends ScrolledComposite implements ControlListe
 
 	@Override
 	public void controlMoved(ControlEvent arg0) {
-		// [TODO] Auto-generated method stub
 		
 	}
 	

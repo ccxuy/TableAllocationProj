@@ -56,7 +56,7 @@ public class OrderBox {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setSize(450, 300);
+		shell.setSize(450, 310);
 		shell.setText("View order");
 
 		Label lblNewLabel = new Label(shell, SWT.NONE);
@@ -110,7 +110,7 @@ public class OrderBox {
 		}
 
 		Button btnConfirm = new Button(shell, SWT.NONE);
-		btnConfirm.setBounds(83, 250, 80, 27);
+		btnConfirm.setBounds(85, 235, 80, 27);
 		btnConfirm.setText("Confirm");
 	}
 
