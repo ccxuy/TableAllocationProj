@@ -13,6 +13,19 @@ public class BookOrder extends Order {
 
 	transient public final int EXPIRE_TIME_HOUR = 2;
 	protected DateTime bookTime; 
+	
+	public BookOrder(String orderID){
+		super(orderID);
+	}
+	
+	public BookOrder(Order o, DateTime bookTime){
+		this.orderID = o.orderID;
+		this.gusets = o.gusets;
+		this.operatorID = o.operatorID;
+		this.state = o.state;
+		this.table = o.table;
+		this.bookTime = bookTime;
+	}
 
 	public BookOrder(String orderID, Operator operator, Table table,
 			Guests gusets, DateTime bookTime) {
@@ -32,9 +45,13 @@ public class BookOrder extends Order {
 	}
 	
 	public boolean canBookTime(DateTime time){
-		DateTime tmp = new DateTime(null);
-		tmp.plus(0, 0, 0, -2, 0, 0, DayOverflow.Spillover);
-		if( 0<tmp.compareTo(bookTime) ){
+		DateTime headTime = new DateTime(bookTime.toString());
+		DateTime tailTime = new DateTime(bookTime.toString());
+		headTime.minus(0, 0, 0, 2, 0, 0, DayOverflow.Spillover);
+		tailTime.plus(0, 0, 0, 2, 0, 0, DayOverflow.Spillover);
+		System.out.println("canBookTime: "+" <  "+headTime+time+tailTime+"  < ");
+		if( false== (headTime.compareTo(time)<=0 &&
+				tailTime.compareTo(time)>=0) ){
 			return true;
 		}
 		return false;

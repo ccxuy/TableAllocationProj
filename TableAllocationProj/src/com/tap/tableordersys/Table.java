@@ -62,13 +62,19 @@ public class Table {
 	
 	public int addBookOrder(BookOrder o) {
 		if(null!=o){
-			this.orderList.add(o);
+			this.bookOrderList.add(o);
 			return Status.SUCCESS.getValue();
 		}else{
 			return Status.FAIL.getValue();
 		}
 	}
 
+	public boolean deleteOrder(Order order) {
+		return this.orderList.remove(order);
+	}
+	public boolean deleteBookOrder(BookOrder bookorder) {
+		return this.bookOrderList.remove(bookorder);
+	}
 	public int cancelOrder(Order order) {
 		int res = Status.FAIL.getValue();
 		for(Order o: this.orderList){
@@ -77,6 +83,12 @@ public class Table {
 				res = Status.SUCCESS.getValue();
 			}
 		}
+		/*for(Order o: this.bookOrderList){
+			if( o.equals(order) ){
+				o.cancel();
+				res = Status.SUCCESS.getValue();
+			}
+		}*/
 		return res;
 	}
 	public int cancelBookOrder(BookOrder order) {
@@ -143,6 +155,44 @@ public class Table {
 		this.capacity = capacity;
 	}
 
+	public Order findOrderByID(String oid){
+		for(Order o:this.orderList){
+			if(o.getOrderID().equals(oid)){
+				return o;
+			}
+		}
+		return null;
+	}
+	
+	public BookOrder findBookOrderByID(String oid){
+		for(BookOrder o:this.bookOrderList){
+			if(o.getOrderID().equals(oid)){
+				return o;
+			}
+		}
+		return null;
+	}
+	
+	public boolean saveOrderByID(Order saveOrder){
+		Order o = findOrderByID(saveOrder.getOrderID());
+		if( o!=null ){
+			this.orderList.remove(o);
+			this.orderList.add(saveOrder);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean saveBookOrderByID(BookOrder saveBookOrder){
+		BookOrder o = findBookOrderByID(saveBookOrder.getOrderID());
+		if( o!=null ){
+			this.bookOrderList.remove(o);
+			this.bookOrderList.add(saveBookOrder);
+			return true;
+		}
+		return false;
+	}
+	
 	public int doEmptyOrderList() {
 		this.orderList.clear();
 		return Status.SUCCESS.getValue();
@@ -160,6 +210,13 @@ public class Table {
 			}
 		}
 		return Status.SUCCESS.getValue();
+	}
+	
+
+	@Override
+	public Table clone(){
+		Table newTable = new Table(id, orderList, bookOrderList, capacity);
+		return newTable;
 	}
 
 	@Override

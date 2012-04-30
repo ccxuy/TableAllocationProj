@@ -1,7 +1,11 @@
 package com.tap.bizlogic;
 
+import hirondelle.date4j.DateTime;
+import hirondelle.date4j.DateTime.DayOverflow;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
@@ -53,6 +57,22 @@ public class OrderLogic {
 
 	public void setOperator(Operator o) {
 		this.operator = o;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+
+	public WaitingList getWaitList() {
+		return waitList;
+	}
+
+	public void setWaitList(WaitingList waitList) {
+		this.waitList = waitList;
 	}
 
 	/**
@@ -271,6 +291,9 @@ public class OrderLogic {
 	public void loadResturant(String restaurantName){
 		this.restaurant = RestaurantLogic.getRestaurant(restaurantName);
 	}
+	public void saveResturant(){
+		RestaurantLogic.saveRestauant(restaurant);
+	}
 	public void loadWaitingList(String restaurantName) {
 		ObjectContainer db = DataControl.getOCDB(WaitingList.class);
 		try{
@@ -339,7 +362,7 @@ public class OrderLogic {
 					List<Guests> glist = db.queryByExample( new Guests(gid) );
 					or.setGusets(glist.get(0));
 				}*/
-				System.out.println("Orders are:"+oList);
+				//System.out.println("Orders are:"+oList);
 				return oList;
 			}else if(0==oplist.size()){
 				System.err.println("No resterant in database!");
@@ -362,6 +385,7 @@ public class OrderLogic {
 			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
 			if(1==oplist.size()){
 				Restaurant r = oplist.get(0);
+				db.activate(r, Setting.defaultDBLoadingDepth);
 				LinkedList<BookOrder> oList = new LinkedList<BookOrder>();
 				for(Table t:r.getTableList()){
 					oList.addAll(t.getBookOrderList());
@@ -430,6 +454,68 @@ public class OrderLogic {
 			}
 		}else{
 			System.err.println("newCustomer: guest already ordered, try another id");
+			return null;
+		}
+		
+	}
+	
+	public List<BookOrder> newBooking(String bookOrderID,Guests guests, DateTime time) {
+		if(null==guests || null==time){
+			System.err.println("newBooking: null==guests || null==time");
+			return null;
+		}
+		DateTime laterThenThisTime = DateTime.now(TimeZone.getDefault());
+		laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
+		if( time.compareTo(laterThenThisTime)<=0 ){
+			System.err.println("newBooking: book time should be later!");
+			return null;
+		}
+		if( null==this.restaurant.findGuestInResturant(guests.getId()) ){
+			if( null==this.waitList.findGuests(guests.getId()) ){
+				//[FIXME] Check available table for booking
+				boolean canBook = true;
+				LinkedList<BookOrder> bol = new LinkedList<BookOrder>();
+				Table t;
+				BookOrder bo;
+				int leftAmount = guests.getAmount();
+				for(Table table:this.restaurant.getTableList()){
+					canBook = true;
+					for(BookOrder boGetFromTable:table.getBookOrderList()){
+						if(false == boGetFromTable.canBookTime(time)){
+							canBook = false;
+						}
+					}
+					if(canBook==true){
+						if(leftAmount>table.getCapacity()){
+							leftAmount -= table.getCapacity();
+							guests.setAmount(table.getCapacity());
+						}else if(leftAmount<=table.getCapacity()){
+							guests.setAmount(leftAmount);
+							leftAmount = 0;
+						}
+						bo = new BookOrder(bookOrderID, this.operator, table, guests, time);
+						restaurant.findTableByID(table.getId()).addBookOrder(bo);
+						bol.add(bo);
+						if(leftAmount<=0){
+							break;
+						}else{
+							continue;
+						}
+					}
+				}
+				if(bol.size()>0){
+					saveResturant();
+					System.out.println("newBooking: "+bol);
+					return bol;
+				}else{
+					return null;
+				}
+			}else{
+				System.err.println("newBooking:  guest already waiting, try another id");
+				return null;
+			}
+		}else{
+			System.err.println("newBooking:  guest already ordered, try another id");
 			return null;
 		}
 		

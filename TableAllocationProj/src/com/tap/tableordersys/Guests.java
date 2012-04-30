@@ -23,6 +23,14 @@ public class Guests {
 		this.seatAlone = seatAlone;
 	}
 	
+	public Guests(String id, String addtionalInfo, String amount, boolean seatAlone) {
+		super();
+		this.id = id;
+		this.addtionalInfo = addtionalInfo;
+		this.amount = new Integer(amount);
+		this.seatAlone = seatAlone;
+	}
+	
 	public Guests(String id, String addtionalInfo, int amount, boolean seatAlone) {
 		super();
 		this.id = id;

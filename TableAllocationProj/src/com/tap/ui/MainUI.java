@@ -291,10 +291,12 @@ public class MainUI {
 	 * @param boxTypeOfListener
 	 * @param ti
 	 */
-	//[FIXME] ModifyBoxDCListenerForTable
+	//[DONE] ModifyBoxDCListenerForTable
 	private void doAddModifyBoxDCListenerToTable(String boxTypeOfListener) {
 		if(boxTypeOfListener.equalsIgnoreCase("Order")){
-			tCursor.addMouseListener(new tiModifyBoxListener());
+			tCursor.addMouseListener(new tiModifyOrderBoxListener());
+		}else if(boxTypeOfListener.equalsIgnoreCase("Book Order")){
+			tCursor.addMouseListener(new tiModifyBookOrderBoxListener());
 		}
 		
 	}
@@ -606,16 +608,18 @@ public class MainUI {
 			doGenerateNewTableView(shell.getShell());
 			doGenerateTableColumn(new String[]{"Book Order","ID","Operator","Table ID","Guest ID","Guest amout","Book time"});
 			List<BookOrder> orderList = orderLogic.getBookOrdersOfResturant();
-			if(null!=orderList)
+			if(null!=orderList){
 				for(BookOrder order:orderList){
 					String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
 							,order.getTable().getId(),order.getGusets().getId()
-							,order.getGusets().getId(),order.getBookTime().toString()};
+							,order.getGusets().getAmountString(),order.getBookTime().toString()};
 					doGenerateTableItem(row);
 					/*for(String s: row)
 						System.out.print(s);
 					System.out.println();*/
 				}
+				doAddModifyBoxDCListenerToTable("Book Order");
+			}
 			computeFormSizeForItem(shell.getShell());
 			doFuckingRefresh();
 		}
@@ -729,12 +733,26 @@ public class MainUI {
 	/**
 	 * @author Andrew
 	 */
-	class tiModifyBoxListener implements MouseListener{
+	class tiModifyOrderBoxListener implements MouseListener{
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
-			System.err.println("Double clicked!");
 			TableItem ti = tCursor.getRow();
-			OrderModifyBox ntd = new OrderModifyBox(new Order(ti.getText(1)));
+			Order o = orderLogic.getRestaurant().findOrderByID(ti.getText(1));
+			System.out.println(o);
+			OrderModifyBox ntd = new OrderModifyBox(o, orderLogic);
+			ntd.open();
+		}
+		@Override
+		public void mouseDown(MouseEvent e) {}
+		@Override
+		public void mouseUp(MouseEvent e) {}
+	}
+	class tiModifyBookOrderBoxListener implements MouseListener{
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			TableItem ti = tCursor.getRow();
+			BookOrder bo = orderLogic.getRestaurant().findBookOrderByID(ti.getText(1));
+			OrderModifyBox ntd = new OrderModifyBox(bo, orderLogic);
 			ntd.open();
 		}
 		@Override

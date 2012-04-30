@@ -1,10 +1,15 @@
 package com.tap.ui;
 
+import hirondelle.date4j.DateTime.DayOverflow;
+
+import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -16,6 +21,7 @@ import com.hexapixel.widgets.generic.Utils;
 import com.tap.bizlogic.OrderLogic;
 import com.tap.tableordersys.BookOrder;
 import com.tap.tableordersys.Guests;
+import com.tap.tableordersys.Order;
 import com.tap.tableordersys.Table;
 import com.tap.usersys.Operator;
 
@@ -23,11 +29,13 @@ public class NewBookingBox {
 
 	private OrderLogic orderLogic;
 	protected Shell shell;
-	private Text text;
-	private Text text_1;
-	private Text text_2;
+	private Text textGuestID;
+	private Text textGuestAmount;
+	private Text textAddtionalInfo;
 	DateTime dateTime;
 	DateTime dateTime_1;
+	private Text textBookOrderID;
+	Button buttonAllowSeatTogether;
 
 	public NewBookingBox(){}
 	public NewBookingBox(OrderLogic orderLogic) {
@@ -72,31 +80,39 @@ public class NewBookingBox {
 		shell.setText("New book order");
 		Utils.centerDialogOnScreen(shell);
 		
+		Label lblBookorderId = new Label(shell, SWT.NONE);
+		lblBookorderId.setBounds(41, 20, 92, 17);
+		lblBookorderId.setText("BookOrder ID");
+		
+		textBookOrderID = new Text(shell, SWT.BORDER);
+		textBookOrderID.setBounds(175, 19, 73, 23);
+		textBookOrderID.setText(UUID.randomUUID().toString().substring(0, 3));
+		
 		Label label = new Label(shell, SWT.NONE);
 		label.setText("Guest ID");
-		label.setBounds(41, 32, 61, 17);
+		label.setBounds(41, 51, 61, 17);
 		
-		text = new Text(shell, SWT.BORDER);
-		text.setText(UUID.randomUUID().toString().substring(0, 3));
-		text.setBounds(175, 32, 73, 23);
+		textGuestID = new Text(shell, SWT.BORDER);
+		textGuestID.setText(UUID.randomUUID().toString().substring(0, 3));
+		textGuestID.setBounds(175, 48, 73, 23);
 		
 		Label label_1 = new Label(shell, SWT.NONE);
 		label_1.setText("Guest amount");
-		label_1.setBounds(41, 61, 94, 17);
+		label_1.setBounds(39, 80, 94, 17);
 		
-		text_1 = new Text(shell, SWT.BORDER);
-		text_1.setBounds(175, 61, 73, 23);
+		textGuestAmount = new Text(shell, SWT.BORDER);
+		textGuestAmount.setBounds(175, 77, 73, 23);
 		
-		Button button = new Button(shell, SWT.CHECK);
-		button.setText("Allow seat together");
-		button.setBounds(77, 98, 146, 17);
+		buttonAllowSeatTogether = new Button(shell, SWT.CHECK);
+		buttonAllowSeatTogether.setText("Allow seat together");
+		buttonAllowSeatTogether.setBounds(41, 103, 146, 17);
 		
 		Label label_2 = new Label(shell, SWT.NONE);
 		label_2.setText("Additional infomation");
 		label_2.setBounds(41, 121, 61, 17);
 		
-		text_2 = new Text(shell, SWT.BORDER);
-		text_2.setBounds(41, 144, 207, 23);
+		textAddtionalInfo = new Text(shell, SWT.BORDER);
+		textAddtionalInfo.setBounds(41, 144, 207, 23);
 		
 		Label lblBookTime = new Label(shell, SWT.NONE);
 		lblBookTime.setBounds(41, 186, 61, 17);
@@ -121,14 +137,53 @@ public class NewBookingBox {
 	class btCommitListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			System.out.println(dateTime);
-			System.out.println(dateTime_1);
-			System.out.println(dateTime_1.getMonth());
-			System.out.println(dateTime.getHours());
-			System.out.println(dateTime.getMinutes());
-			hirondelle.date4j.DateTime bookTime = new hirondelle.date4j.DateTime(dateTime_1.getYear(), dateTime_1.getMonth()+1, dateTime_1.getDay(), dateTime.getHours(), dateTime.getMinutes(), 0, 0);
-			System.out.println(bookTime);
-			BookOrder bo = new BookOrder(new Operator("test", "123"), new Table("123", 12), new Guests("123"), bookTime);
+			Integer amount = new Integer(0);;
+			try{
+				amount = new Integer(textGuestAmount.getText());
+				if(amount<=0){
+					MessageBox msgBox = new MessageBox(shell, 1);
+					msgBox.setMessage("How can you have so \"MANY\" people?");
+					msgBox.open();
+					return;
+				}
+			}catch (NumberFormatException ex) {
+				System.err.println(ex.getMessage());
+				MessageBox msgBox = new MessageBox(shell, 1);
+				msgBox.setMessage("Wrong amount input!");
+				msgBox.open();
+				return;
+			}
+			
+			hirondelle.date4j.DateTime bookTime = new hirondelle.date4j.DateTime(dateTime_1.getYear()
+					, dateTime_1.getMonth()+1, dateTime_1.getDay(), dateTime.getHours()
+					, dateTime.getMinutes(), 0, 0);
+			hirondelle.date4j.DateTime laterThenThisTime = hirondelle.date4j.DateTime.now(TimeZone.getDefault());
+			laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
+			if( bookTime.compareTo(laterThenThisTime)<=0 ){
+				System.err.println("newBooking: book time should be later!");
+				MessageBox msgBox = new MessageBox(shell, 1);
+				msgBox.setMessage("Only can book time after 2 hour!");
+				msgBox.open();
+				return;
+			}
+			
+			//Save Booking
+			Guests g = new Guests(textGuestID.getText(), textAddtionalInfo.getText(), textGuestAmount.getText()
+					, !buttonAllowSeatTogether.getSelection());
+			List<BookOrder> o = orderLogic.newBooking(textBookOrderID.getText(), g, bookTime);
+			if(null!=o){
+				MessageBox msgBox = new MessageBox(shell, 2);
+				StringBuffer msgContent = new StringBuffer();
+				for(Order or:o){
+					msgContent.append(" "+or.getTable().getId());
+				}
+				msgBox.setMessage("Customer occupied table of "+msgContent);
+				msgBox.open();
+			}else{
+				MessageBox msgBox = new MessageBox(shell, 2);
+				msgBox.setMessage("Not enough table avalable at time:"+bookTime+".");
+				msgBox.open();
+			}
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}

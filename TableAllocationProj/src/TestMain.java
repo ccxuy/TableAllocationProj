@@ -1,10 +1,13 @@
+import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import hirondelle.date4j.DateTime;
 
 import org.eclipse.swt.SWT;
 
 import com.tap.bizlogic.OperatorLogic;
+import com.tap.bizlogic.OrderLogic;
 import com.tap.bizlogic.RestaurantLogic;
 import com.tap.locinfo.Setting;
 import com.tap.tableordersys.BookOrder;
@@ -25,6 +28,8 @@ public class TestMain {
 	 */
 	public static void main(String[] args) throws Exception {
 		OperatorLogic opLogic = new OperatorLogic();
+		/*Operator o = opLogic.login("admin", "admin");
+		OrderLogic orderLogic = new OrderLogic(o);*/
 		
 		/*System.out.println( opLogic.register("", "", OperatorLogic.PO_ADMIN));
 		opLogic.register("admin", "admin", OperatorLogic.PO_ADMIN);
@@ -45,14 +50,14 @@ public class TestMain {
 		a1Table.addOrder(new Order("2", op, a1Table, new Guests("guest2","", 13, true)));
 		a1Table.addOrder(new Order("3", op, a1Table, new Guests("3群魂淡","", 4, false)));
 		r.addTable(a1Table);
+		a1Table = a1Table.clone();
 		a1Table.setId("A2");
 		r.addTable(a1Table);
+		a1Table = a1Table.clone();
 		a1Table.setId("A3");
 		r.addTable(a1Table);
 		System.out.println(r);
 		RestaurantLogic.saveRestauant(r);
-		
-		
 		
 		
 	}

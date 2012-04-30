@@ -73,6 +73,15 @@ public class Restaurant{
 		return tableList;
 	}
 	
+	public Table findTableByID(String tid){
+		for(Table t:this.tableList){
+			if(t.getId().equals(tid)){
+				return t;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * copy except name
 	 * @param r
@@ -98,6 +107,27 @@ public class Restaurant{
 	@Override
 	public String toString() {
 		return "Restaurant [name=" + name + ", tableList=" + tableList + "]";
+	}
+
+	public Order findOrderByID(String id) {
+		for(Table t: this.tableList){
+			for(Order o:t.getOrderList()){
+				if(o.getOrderID().equals(id)){
+					return o;
+				}
+			}
+		}
+		return null;
+	}
+	public BookOrder findBookOrderByID(String id) {
+		for(Table t: this.tableList){
+			for(BookOrder o:t.getBookOrderList()){
+				if(o.getOrderID().equals(id)){
+					return o;
+				}
+			}
+		}
+		return null;
 	}
 	
 }
