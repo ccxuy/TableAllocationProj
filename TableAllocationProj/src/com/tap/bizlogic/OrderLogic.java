@@ -380,33 +380,15 @@ public class OrderLogic {
 		return getBookOrdersOfResturant(restaurant.getName());
 	}
 	public List<BookOrder> getBookOrdersOfResturant(String resturantName) {
-		ObjectContainer db = DataControl.getOCDB(Restaurant.class);
-		try{
-			List<Restaurant> oplist = db.queryByExample( new Restaurant(resturantName) );
-			if(1==oplist.size()){
-				Restaurant r = oplist.get(0);
-				db.activate(r, Setting.defaultDBLoadingDepth);
-				LinkedList<BookOrder> oList = new LinkedList<BookOrder>();
-				for(Table t:r.getTableList()){
-					oList.addAll(t.getBookOrderList());
-				}
-				for(BookOrder or:oList){
-					String gid = or.getGuestID();
-					List<Guests> glist = db.queryByExample( new Guests(gid) );
-					or.setGusets(glist.get(0));
-				}
-				System.out.println("BookOrder are:"+oList);
-				return oList;
-			}else if(0==oplist.size()){
-				System.err.println("No resterant in database!");
-				return null;
-			}else{
-				System.err.println("Error on getOrdersOfResturant!");
-				return null;
-			}
-		}finally{
-			db.close();
+		if(this.restaurant==null){
+			System.err.println("OrderLogic not initialized!");
+			return null;
 		}
+		LinkedList<BookOrder> oList = new LinkedList<BookOrder>();
+		for(Table t:restaurant.getTableList()){
+			oList.addAll(t.getBookOrderList());
+		}
+		return oList;
 	}
 
 	public WaitingList getWaitingListOfResturant(){

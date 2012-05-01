@@ -75,31 +75,13 @@ public class Table {
 	public boolean deleteBookOrder(BookOrder bookorder) {
 		return this.bookOrderList.remove(bookorder);
 	}
-	public int cancelOrder(Order order) {
-		int res = Status.FAIL.getValue();
-		for(Order o: this.orderList){
-			if( o.equals(order) ){
-				o.cancel();
-				res = Status.SUCCESS.getValue();
-			}
-		}
-		/*for(Order o: this.bookOrderList){
-			if( o.equals(order) ){
-				o.cancel();
-				res = Status.SUCCESS.getValue();
-			}
-		}*/
-		return res;
+	public boolean cancelOrder(Order order) {
+		order.cancel();
+		return this.orderList.remove(order);
 	}
-	public int cancelBookOrder(BookOrder order) {
-		int res = Status.FAIL.getValue();
-		for(BookOrder o: this.bookOrderList){
-			if( o.equals(order) ){
-				o.cancel();
-				res = Status.SUCCESS.getValue();
-			}
-		}
-		return res;
+	public boolean cancelBookOrder(BookOrder order) {
+		order.cancel();
+		return this.bookOrderList.remove(order);
 	}
 
 	public List<Order> getOrderList() {
