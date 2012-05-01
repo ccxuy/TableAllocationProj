@@ -218,7 +218,7 @@ public class BookOrderModifyBox {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			
-			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
+			Order o = ol.getRestaurant().findBookOrderByID(textOrderID.getText());
 			boolean change = false;
 			if(null!=o){
 				if(o instanceof BookOrder){
@@ -235,6 +235,7 @@ public class BookOrderModifyBox {
 					cOrder.checkIn();
 					change = cOrder.getTable().deleteBookOrder(cOrder);
 					cOrder.getTable().addOrder(cOrder);
+					
 				}
 			}
 			ol.saveResturant();
