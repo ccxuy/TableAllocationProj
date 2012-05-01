@@ -34,9 +34,8 @@ public class OperatorLogic {
 	 * @param id
 	 * @param pw
 	 * @return Operator, if wrong pw or id, return null
-	 * @throws Exception database error
 	 */
-	public Operator login(String id, String pw) throws Exception{
+	public Operator login(String id, String pw){
 		ObjectContainer db = DataControl.getOCDB(Operator.class);
 		try{
 			List<Operator> oplist = db.queryByExample(new Operator(id, pw));
@@ -112,4 +111,26 @@ public class OperatorLogic {
 		}
 	}
 
+	/**
+	 * @param id
+	 * @param pw
+	 * @return Operator, if wrong pw or id, return null
+	 */
+	public Operator findOperatorByID(String id){
+		ObjectContainer db = DataControl.getOCDB(Operator.class);
+		try{
+			List<Operator> oplist = db.queryByExample(new Operator(id));
+			if(1<oplist.size()){
+				//throw new Exception("Database have dupilicate entities for login user!");
+				System.err.println("Database have dupilicate entities for this user!");
+			}
+			if(0>=oplist.size()){
+				return null;
+			}else{
+				return oplist.get(0);
+			}
+		}finally{
+			db.close();
+		}
+	}
 }

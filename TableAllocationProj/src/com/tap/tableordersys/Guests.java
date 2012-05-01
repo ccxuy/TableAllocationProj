@@ -53,6 +53,20 @@ public class Guests {
 	public String getAmountString() {
 		return (new Integer(getAmount())).toString();
 	}
+	
+	public boolean setAmountString(String amount) {
+		try{
+			Integer i = new Integer(amount);
+			if(i>=0){
+				this.amount = i;
+				return true;
+			}else{
+				return false;
+			}
+		}catch (NumberFormatException e) {
+			return false;
+		}
+	}
 
 	public void setAmount(int amount) {
 		this.amount = amount;

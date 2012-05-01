@@ -1,5 +1,9 @@
 package com.tap.ui;
 
+import java.util.TimeZone;
+
+import hirondelle.date4j.DateTime;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -11,13 +15,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.hexapixel.widgets.generic.Utils;
-import com.tap.bizlogic.OrderLogic;
-import com.tap.tableordersys.BookOrder;
-import com.tap.tableordersys.Guests;
-import com.tap.tableordersys.Order;
-import com.tap.tableordersys.Table;
+import com.tap.bizlogic.*;
+import com.tap.tableordersys.*;
 
-public class OrderModifyBox {
+public class BookOrderModifyBox {
 	protected Object result;
 	private Text textOrderID;
 	private Text textOperatorID;
@@ -32,12 +33,12 @@ public class OrderModifyBox {
 
 	protected Shell shell;
 
-	public OrderModifyBox() {}
-	public OrderModifyBox(Order o,OrderLogic ol) {
+	public BookOrderModifyBox() {}
+	public BookOrderModifyBox(Order o,OrderLogic ol) {
 		this.order = o;
 		this.ol = ol;
 	}
-	public OrderModifyBox(boolean modifyID) {
+	public BookOrderModifyBox(boolean modifyID) {
 		this.modifyID = modifyID;
 	}
 
@@ -47,7 +48,7 @@ public class OrderModifyBox {
 	 */
 	public static void main(String[] args) {
 		try {
-			OrderModifyBox window = new OrderModifyBox();
+			BookOrderModifyBox window = new BookOrderModifyBox();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,7 +75,7 @@ public class OrderModifyBox {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setSize(300, 325);
+		shell.setSize(362, 325);
 		shell.setText("Modify order");
 		Utils.centerDialogOnScreen(shell);
 		
@@ -86,7 +87,7 @@ public class OrderModifyBox {
 		
 		if(null==order.getOrderID())return;
 		textOrderID = new Text(shell, SWT.BORDER);
-		textOrderID.setBounds(141, 36, 73, 23);
+		textOrderID.setBounds(141, 36, 137, 23);
 		textOrderID.setText(order.getOrderID());
 		textOrderID.setEnabled(modifyID);
 		
@@ -95,7 +96,7 @@ public class OrderModifyBox {
 		lblNewLabel_1.setText("Operator:");
 		
 		textOperatorID = new Text(shell, SWT.BORDER);
-		textOperatorID.setBounds(141, 72, 73, 23);
+		textOperatorID.setBounds(141, 72, 137, 23);
 		if(null!=order.getOperatorID())
 			textOperatorID.setText(order.getOperatorID());
 		textOperatorID.setEnabled(false);
@@ -105,7 +106,7 @@ public class OrderModifyBox {
 		lblNewLabel_2.setText("Table ID:");
 		
 		textTableID = new Text(shell, SWT.BORDER);
-		textTableID.setBounds(141, 101, 73, 23);
+		textTableID.setBounds(141, 101, 137, 23);
 		if(null!=order.getTable())
 			textTableID.setText(order.getTable().getId());
 
@@ -114,39 +115,46 @@ public class OrderModifyBox {
 		lblNewLabel_3.setText("Guest ID:");
 		
 		textGusetsID = new Text(shell, SWT.BORDER);
-		textGusetsID.setBounds(141, 133, 73, 23);
-		textGusetsID.setEnabled(false);
+		textGusetsID.setBounds(141, 133, 137, 23);
 		if(null!=order.getGusets())
 			textGusetsID.setText(order.getGusets().getId());
 
 		Label lblNewLabel_4 = new Label(shell, SWT.NONE);
-		lblNewLabel_4.setBounds(33, 178, 73, 17);
+		lblNewLabel_4.setBounds(33, 165, 73, 17);
 		lblNewLabel_4.setText("Guest amout:");
 		
 		textGusetsAmount = new Text(shell, SWT.BORDER);
-		textGusetsAmount.setBounds(141, 172, 73, 23);
+		textGusetsAmount.setBounds(141, 162, 137, 23);
 		if(null!=order.getGusets())
 			textGusetsAmount.setText(order.getGusets().getAmountString());
 		
-		if(order instanceof BookOrder){
+		if(!(order instanceof BookOrder)){
+			System.err.println("Order is not a book order!");
+			return;
+		}
 			Label lblBookTime = new Label(shell, SWT.NONE);
-			lblBookTime.setBounds(33, 215, 73, 17);
+			lblBookTime.setBounds(33, 194, 73, 17);
 			lblBookTime.setText("Book time:");
 			
 			textBookTime = new Text(shell, SWT.BORDER);
-			textBookTime.setBounds(141, 213, 73, 23);
+			textBookTime.setBounds(141, 191, 137, 23);
 			textBookTime.setText( ((BookOrder)order).getBookTime().toString() );
-		}
+		
 
 		Button btnSave = new Button(shell, SWT.NONE);
-		btnSave.setBounds(33, 232, 80, 27);
+		btnSave.setBounds(33, 238, 80, 27);
 		btnSave.setText("Save");
 		btnSave.addSelectionListener(new btSaveListener());
 		
 		Button btnDelete = new Button(shell, SWT.NONE);
-		btnDelete.setBounds(141, 232, 80, 27);
-		btnDelete.setText("Check out");
-		btnDelete.addSelectionListener(new btCheckOutListener());
+		btnDelete.setBounds(141, 238, 80, 27);
+		btnDelete.setText("Cancel");
+		btnDelete.addSelectionListener(new btCancelListener());
+		
+		Button btnCheckin = new Button(shell, SWT.NONE);
+		btnCheckin.setBounds(242, 238, 80, 27);
+		btnCheckin.setText("CheckIn");
+		btnCheckin.addSelectionListener(new btCheckInListener());
 
 	}
 
@@ -172,7 +180,6 @@ public class OrderModifyBox {
 					msgBox.open();
 					return;
 				}
-				
 				if(order instanceof BookOrder){
 					BookOrder saveOrder = (BookOrder) order;
 					t.saveBookOrderByID(saveOrder);
@@ -186,13 +193,14 @@ public class OrderModifyBox {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
 	}
-	class btCheckOutListener implements SelectionListener{
+	class btCancelListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
 			boolean change = false;
 			if(null!=o){
 				if(o instanceof BookOrder){
+					o.cancel();
 					BookOrder cOrder = (BookOrder) o;
 					change = o.getTable().deleteBookOrder(cOrder);
 				}else{
@@ -200,6 +208,35 @@ public class OrderModifyBox {
 				}
 			}
 			System.out.println(change);
+			ol.saveResturant();
+			shell.close();
+		}
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {}
+	}
+	class btCheckInListener implements SelectionListener{
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			
+			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
+			boolean change = false;
+			if(null!=o){
+				if(o instanceof BookOrder){
+					BookOrder cOrder = (BookOrder) o;
+					DateTime now = DateTime.now(TimeZone.getDefault());
+					if(false==cOrder.canBookTime(now)){//Means is in his book time
+						
+					}else{
+						MessageBox msgBox = new MessageBox(shell, 1);
+						msgBox.setMessage("Check in fail, only check in in booked time:"+cOrder.getBookTime()+"!");
+						msgBox.open();
+						return;
+					}
+					cOrder.checkIn();
+					change = cOrder.getTable().deleteBookOrder(cOrder);
+					cOrder.getTable().addOrder(cOrder);
+				}
+			}
 			ol.saveResturant();
 			shell.close();
 		}

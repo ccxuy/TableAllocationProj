@@ -29,6 +29,11 @@ public class Operator {
 		super();
 	}
 
+	public Operator(String id) {
+		super();
+		this.id = id;
+	}
+
 	public Operator(String id, String password) {
 		super();
 		this.id = id;

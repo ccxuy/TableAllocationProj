@@ -297,6 +297,12 @@ public class MainUI {
 			tCursor.addMouseListener(new tiModifyOrderBoxListener());
 		}else if(boxTypeOfListener.equalsIgnoreCase("Book Order")){
 			tCursor.addMouseListener(new tiModifyBookOrderBoxListener());
+		}else if(boxTypeOfListener.equalsIgnoreCase("Waiting List")){
+			tCursor.addMouseListener(new tiModifyWaitingListBoxListener());
+		}else if(boxTypeOfListener.equalsIgnoreCase("Table")){
+			tCursor.addMouseListener(new tiModifyTableBoxListener());
+		}else if(boxTypeOfListener.equalsIgnoreCase("Staff")){
+			tCursor.addMouseListener(new tiModifyStaffBoxListener());
 		}
 		
 	}
@@ -641,6 +647,7 @@ public class MainUI {
 						System.out.print(s);
 					System.out.println();*/
 				}
+				doAddModifyBoxDCListenerToTable("Waiting List");
 			}
 			computeFormSizeForItem(shell.getShell());
 			doFuckingRefresh();
@@ -654,7 +661,7 @@ public class MainUI {
 			doGenerateNewTableView(shell.getShell());
 			doGenerateTableColumn(new String[]{"Table","ID","capacity"});
 			List<com.tap.tableordersys.Table> re = orderLogic.getTablesOfResturant();
-			if(null!=re)
+			if(null!=re){
 				for(com.tap.tableordersys.Table op:re){
 					String[] row = new String[]{"",op.getId(),op.getCapacityString()};
 					doGenerateTableItem(row);
@@ -662,6 +669,8 @@ public class MainUI {
 						System.out.print(s);
 					System.out.println();*/
 				}
+				doAddModifyBoxDCListenerToTable("Table");
+			}
 			computeFormSizeForItem(shell.getShell());
 			doFuckingRefresh();
 		}
@@ -674,7 +683,7 @@ public class MainUI {
 			doGenerateNewTableView(shell.getShell());
 			doGenerateTableColumn(new String[]{"Member","ID","Position"});
 			List<Operator> opList = opLogic.getAllOperator();
-			if(null!=opList)
+			if(null!=opList){
 				for(Operator op:opList){
 					String[] row = new String[]{"",op.getId(),op.getPosition()};
 					doGenerateTableItem(row);
@@ -682,6 +691,8 @@ public class MainUI {
 						System.out.print(s);
 					System.out.println();*/
 				}
+				doAddModifyBoxDCListenerToTable("Staff");
+			}
 			computeFormSizeForItem(shell.getShell());
 			doFuckingRefresh();
 		}
@@ -753,6 +764,45 @@ public class MainUI {
 			TableItem ti = tCursor.getRow();
 			BookOrder bo = orderLogic.getRestaurant().findBookOrderByID(ti.getText(1));
 			BookOrderModifyBox ntd = new BookOrderModifyBox(bo, orderLogic);
+			ntd.open();
+		}
+		@Override
+		public void mouseDown(MouseEvent e) {}
+		@Override
+		public void mouseUp(MouseEvent e) {}
+	}
+	class tiModifyWaitingListBoxListener implements MouseListener{
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			/*TableItem ti = tCursor.getRow();
+			BookOrder bo = orderLogic.getRestaurant().findBookOrderByID(ti.getText(1));
+			BookOrderModifyBox ntd = new BookOrderModifyBox(bo, orderLogic);
+			ntd.open();*/
+		}
+		@Override
+		public void mouseDown(MouseEvent e) {}
+		@Override
+		public void mouseUp(MouseEvent e) {}
+	}
+	class tiModifyTableBoxListener implements MouseListener{
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			TableItem ti = tCursor.getRow();
+			com.tap.tableordersys.Table bo = orderLogic.getRestaurant().findTableByID(ti.getText(1));
+			TableModifyBox ntd = new TableModifyBox(bo, orderLogic);
+			ntd.open();
+		}
+		@Override
+		public void mouseDown(MouseEvent e) {}
+		@Override
+		public void mouseUp(MouseEvent e) {}
+	}
+	class tiModifyStaffBoxListener implements MouseListener{
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			TableItem ti = tCursor.getRow();
+			Operator bo = opLogic.findOperatorByID(ti.getText(1));
+			StaffModifyBox ntd = new StaffModifyBox(bo, opLogic);
 			ntd.open();
 		}
 		@Override
