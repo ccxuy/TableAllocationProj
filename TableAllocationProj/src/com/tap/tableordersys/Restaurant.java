@@ -10,19 +10,36 @@ import com.tap.usersys.Operator;
 public class Restaurant{
  
 	private String name;
-	 
 	private List<Table> tableList;
+	private List<Log> log;
 	
 	public Restaurant(String name) {
 		super();
 		this.name = name;
 		this.tableList = new LinkedList<Table>();
+		this.log = new LinkedList<Log>();
 	}
 
 	public Restaurant(String name, List<Table> tableList) {
 		super();
 		this.name = name;
 		this.tableList = tableList;
+		this.log = new LinkedList<Log>();
+	}
+
+	public Restaurant(String name, List<Table> tableList, List<Log> log) {
+		super();
+		this.name = name;
+		this.tableList = tableList;
+		this.log = log;
+	}
+
+	public List<Log> getLog() {
+		return log;
+	}
+
+	public void setLog(List<Log> log) {
+		this.log = log;
 	}
 
 	public int addTable(Table t) {

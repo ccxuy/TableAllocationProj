@@ -160,6 +160,7 @@ public class OrderModifyBox {
 				}
 			}
 			ol.saveResturant();
+			shell.close();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
@@ -179,6 +180,7 @@ public class OrderModifyBox {
 			}
 			System.out.println(change);
 			ol.saveResturant();
+			shell.close();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}

@@ -184,6 +184,7 @@ public class NewBookingBox {
 				msgBox.setMessage("Not enough table avalable at time:"+bookTime+".");
 				msgBox.open();
 			}
+			shell.close();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}

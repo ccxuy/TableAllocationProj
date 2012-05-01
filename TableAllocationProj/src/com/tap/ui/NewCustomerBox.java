@@ -123,7 +123,7 @@ public class NewCustomerBox {
 				msgBox.open();
 				return;
 			}
-			List<Order> o = orderLogic.newCustomer(new Guests(text.getText(),text_2.getText() ,amount , btnAllowSeatTogether.getSelection()));
+			List<Order> o = orderLogic.newCustomer(new Guests(text.getText(),text_2.getText() ,amount , false==btnAllowSeatTogether.getSelection()));
 			
 			if(null!=o){
 				MessageBox msgBox = new MessageBox(shell, 2);
@@ -138,6 +138,7 @@ public class NewCustomerBox {
 				msgBox.setMessage("Customer should wait until table avalable.");
 				msgBox.open();
 			}
+			shell.close();
 		}
 	}
 }

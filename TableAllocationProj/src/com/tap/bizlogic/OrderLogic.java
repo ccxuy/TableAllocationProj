@@ -456,7 +456,6 @@ public class OrderLogic {
 			System.err.println("newCustomer: guest already ordered, try another id");
 			return null;
 		}
-		
 	}
 	
 	public List<BookOrder> newBooking(String bookOrderID,Guests guests, DateTime time) {

@@ -340,7 +340,7 @@ public class MainUI {
         RibbonButton rbNewTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "New Table", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "Modify Table", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbDelTable = new RibbonButton(tableSub, ImageCache.getImage("olb_picture.gif"), "Delete Table", RibbonButton.STYLE_NO_DEPRESS);
-        rbNewTable.addSelectionListener(new btAddTableListener());
+        rbNewTable.addSelectionListener(new btNewTableListener());
         //end Booking group
         //Group Staff Management
         RibbonGroup rgStaff = new RibbonGroup(ftTable, "Staff Management");
@@ -694,15 +694,6 @@ public class MainUI {
 			
 		}
 	}
-	class btAddTableListener implements SelectionListener{
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {}
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			TestBox ntd = new TestBox();
-			ntd.open();
-		}
-	}
 	class btNewCustomerListener implements SelectionListener{
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
@@ -718,6 +709,15 @@ public class MainUI {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			NewBookingBox ntd = new NewBookingBox(orderLogic);
+			ntd.open();
+		}
+	}
+	class btNewTableListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			NewTableBox ntd = new NewTableBox(orderLogic);
 			ntd.open();
 		}
 	}
@@ -752,7 +752,7 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			BookOrder bo = orderLogic.getRestaurant().findBookOrderByID(ti.getText(1));
-			OrderModifyBox ntd = new OrderModifyBox(bo, orderLogic);
+			BookOrderModifyBox ntd = new BookOrderModifyBox(bo, orderLogic);
 			ntd.open();
 		}
 		@Override
