@@ -153,33 +153,26 @@ public class OrderModifyBox {
 	class btSaveListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Table t = ol.getRestaurant().findTableByID(textOrderID.getText());
-			if(null!=t){
-				Table modifyTable = ol.getRestaurant().findTableByID(textTableID.getText());
-				if(modifyTable!=null){
-					order.setTable(modifyTable);
-				}else{
-					MessageBox msgBox = new MessageBox(shell, 1);
-					msgBox.setMessage("No such Table!");
-					msgBox.open();
-					return;
-				}
-				Guests g = order.getGusets();
-				boolean change = g.setAmountString( textGusetsAmount.getText() );
-				if(!change){
-					MessageBox msgBox = new MessageBox(shell, 1);
-					msgBox.setMessage("Wrong amount input!");
-					msgBox.open();
-					return;
-				}
-				
-				if(order instanceof BookOrder){
-					BookOrder saveOrder = (BookOrder) order;
-					t.saveBookOrderByID(saveOrder);
-				}else{
-					t.saveOrderByID(order);
-				}
+			Table modifyTable = ol.getRestaurant().findTableByID(textTableID.getText());
+			if(modifyTable==null){
+				MessageBox msgBox = new MessageBox(shell, 1);
+				msgBox.setMessage("No such Table!");
+				msgBox.open();
+				return;
 			}
+			Guests g = order.getGusets();
+			boolean change = g.setAmountString( textGusetsAmount.getText() );
+			if(!change){
+				MessageBox msgBox = new MessageBox(shell, 1);
+				msgBox.setMessage("Wrong amount input!");
+				msgBox.open();
+				return;
+			}
+
+			order.getTable().deleteOrder(order);
+			order.setTable(modifyTable);
+			modifyTable.addOrder(order);
+			
 			ol.saveResturant();
 			shell.close();
 		}
@@ -199,7 +192,6 @@ public class OrderModifyBox {
 					change = o.getTable().deleteOrder(o);
 				}
 			}
-			System.out.println(change);
 			ol.saveResturant();
 			shell.close();
 		}

@@ -16,8 +16,8 @@ public class TableModifyBox {
 	private Table cTable;
 
 	protected Shell shell;
-	private Text text;
-	private Text text_1;
+	private Text textID;
+	private Text textCapacity;
 
 	
 	public TableModifyBox() {
@@ -71,15 +71,17 @@ public class TableModifyBox {
 		lblId.setBounds(42, 46, 61, 17);
 		lblId.setText("ID");
 		
+		textID = new Text(shell, SWT.BORDER);
+		textID.setBounds(135, 40, 73, 23);
+		textID.setText(cTable.getId());
+		
 		Label lblCapacity = new Label(shell, SWT.NONE);
 		lblCapacity.setBounds(42, 108, 61, 17);
 		lblCapacity.setText("Capacity");
 		
-		text = new Text(shell, SWT.BORDER);
-		text.setBounds(135, 40, 73, 23);
-		
-		text_1 = new Text(shell, SWT.BORDER);
-		text_1.setBounds(135, 102, 73, 23);
+		textCapacity = new Text(shell, SWT.BORDER);
+		textCapacity.setBounds(135, 102, 73, 23);
+		textCapacity.setText(cTable.getCapacityString());
 		
 		Button btnSave = new Button(shell, SWT.NONE);
 		btnSave.setBounds(27, 167, 80, 27);

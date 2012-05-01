@@ -749,7 +749,6 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			Order o = orderLogic.getRestaurant().findOrderByID(ti.getText(1));
-			System.out.println(o);
 			OrderModifyBox ntd = new OrderModifyBox(o, orderLogic);
 			ntd.open();
 		}

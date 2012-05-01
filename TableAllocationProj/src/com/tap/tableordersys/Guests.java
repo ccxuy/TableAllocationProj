@@ -51,7 +51,7 @@ public class Guests {
 		return amount;
 	}
 	public String getAmountString() {
-		return (new Integer(getAmount())).toString();
+		return (new Integer(amount)).toString();
 	}
 	
 	public boolean setAmountString(String amount) {
