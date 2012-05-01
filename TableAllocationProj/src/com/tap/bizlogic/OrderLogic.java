@@ -6,6 +6,7 @@ import hirondelle.date4j.DateTime.DayOverflow;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
@@ -79,27 +80,28 @@ public class OrderLogic {
 	 * 向固定饭店的某个restaurant 添加order
 	 * param需要提前定义好
 	 * @param operator
-	 * @param gusets
+	 * @param guests
 	 * @param restaurant
 	 * @return
 	 */
-	public boolean addOrder(Guests gusets) {
+	public boolean addOrder(Guests guests) {
 		lastOrders.clear();
-		int numOfPeople = gusets.getAmount();
+		int numOfPeople = guests.getAmount();
 		Table tableCheck = checkNewTableExist(restaurant);
 		
-		System.out.println("assigning table");
+		System.out.println("assigning table lastOrders:"+lastOrders.size());
 		Order o;
 		while (numOfPeople > 0 && tableCheck != null && tableCheck.getCapacity()>0) {
 			System.out.println("numOfPeople: "+numOfPeople+"\t"+tableCheck);
+			Guests orderGuests = new Guests(guests.getId(),guests.getAddtionalInfo(),guests.getAmount(),guests.getSeatAlone());
 			if (numOfPeople > tableCheck.getCapacity()) {
-				gusets.setAmount(tableCheck.getCapacity());
+				orderGuests.setAmount(tableCheck.getCapacity());
 				numOfPeople = numOfPeople - tableCheck.getCapacity();
 			} else {
-				gusets.setAmount(numOfPeople);
+				orderGuests.setAmount(numOfPeople);
 				numOfPeople = 0;
 			}
-			o = new Order(operator, tableCheck, gusets);
+			o = new Order(operator, tableCheck, orderGuests);
 			o.checkIn();
 			this.lastOrders.add(o);
 			tableCheck.getOrderList().add(o);
@@ -109,20 +111,20 @@ public class OrderLogic {
 		}
 		
 		System.out.println("dispatching table");
-		if (numOfPeople > 0 && gusets.isSeatAlone() == false) {
+		if (numOfPeople > 0 && guests.isSeatAlone() == false) {
 			
 			tableCheck = getTableWithMaxCapacity(restaurant);
 			while (numOfPeople > 0 && tableCheck!=null
 					&& tableCheck.countGuestNumberInTable() < tableCheck.getCapacity()) {
-				
+				Guests orderGuests = new Guests(guests.getId(),guests.getAddtionalInfo(),guests.getAmount(),guests.getSeatAlone());
 				if (numOfPeople > (tableCheck.getCapacity() - tableCheck.countGuestNumberInTable())) {
-					gusets.setAmount(tableCheck.getCapacity() - tableCheck.countGuestNumberInTable());
+					orderGuests.setAmount(tableCheck.getCapacity() - tableCheck.countGuestNumberInTable());
 					numOfPeople = numOfPeople - (tableCheck.getCapacity() - tableCheck.countGuestNumberInTable());
 				} else {
-					gusets.setAmount(numOfPeople);
+					orderGuests.setAmount(numOfPeople);
 					numOfPeople = 0;
 				}
-				o = new Order(operator, tableCheck, gusets);
+				o = new Order(operator, tableCheck, orderGuests);
 				o.checkIn();
 				this.lastOrders.add(o);
 				tableCheck.getOrderList().add(o);
@@ -139,9 +141,11 @@ public class OrderLogic {
 		}
 		RestaurantLogic.saveRestauant(restaurant);
 		
-		gusets.setAmount(numOfPeople);
-		this.waitList.addGuests(gusets);
-		saveWaitingList();
+		if(numOfPeople>=0){
+			guests.setAmount(numOfPeople);
+			this.waitList.addGuests(guests);
+			saveWaitingList();
+		}
 		
 		if(this.lastOrders.size()>=0)
 			return true;
@@ -386,8 +390,10 @@ public class OrderLogic {
 		}
 		LinkedList<BookOrder> oList = new LinkedList<BookOrder>();
 		for(Table t:restaurant.getTableList()){
+			//System.out.println(t);
 			oList.addAll(t.getBookOrderList());
 		}
+		//System.out.println("getBookOrdersOfResturant size: "+oList.size());
 		return oList;
 	}
 
@@ -419,8 +425,7 @@ public class OrderLogic {
 			System.err.println("newCustomer: null guests!");
 			return null;
 		}
-		Guests g = this.restaurant.findGuestInResturant(guests.getId());
-		if(null==g){
+		if(null==this.restaurant.findGuestInResturant(guests.getId())){
 			if( null==this.waitList.findGuests(guests.getId()) ){
 				
 				boolean addedToTable = addOrder(guests);
@@ -456,7 +461,6 @@ public class OrderLogic {
 				//[FIXME] Check available table for booking
 				boolean canBook = true;
 				LinkedList<BookOrder> bol = new LinkedList<BookOrder>();
-				Table t;
 				BookOrder bo;
 				int leftAmount = guests.getAmount();
 				for(Table table:this.restaurant.getTableList()){
@@ -467,16 +471,24 @@ public class OrderLogic {
 						}
 					}
 					if(canBook==true){
+						Guests subGuests = new Guests(guests.getId());
+						subGuests.setSeatAlone(guests.getSeatAlone());
 						if(leftAmount>table.getCapacity()){
-							leftAmount -= table.getCapacity();
-							guests.setAmount(table.getCapacity());
+							leftAmount = leftAmount-table.getCapacity();
+							subGuests.setAmount(table.getCapacity());
 						}else if(leftAmount<=table.getCapacity()){
-							guests.setAmount(leftAmount);
+							subGuests.setAmount(leftAmount);
 							leftAmount = 0;
 						}
-						bo = new BookOrder(bookOrderID, this.operator, table, guests, time);
+						bo = new BookOrder(bookOrderID+"_"+UUID.randomUUID().toString().substring(0, 1)
+								, this.operator, table, subGuests, time);
+
+						System.out.println("add bookorder : "+bo);
+						//System.err.println(restaurant.findTableByID(table.getId()).getBookOrderList().size());
 						restaurant.findTableByID(table.getId()).addBookOrder(bo);
+						//System.err.println(restaurant.findTableByID(table.getId()).getBookOrderList().size());
 						bol.add(bo);
+						
 						if(leftAmount<=0){
 							break;
 						}else{
@@ -486,7 +498,7 @@ public class OrderLogic {
 				}
 				if(bol.size()>0){
 					saveResturant();
-					System.out.println("newBooking: "+bol);
+					//System.out.println("newBooking:"+bol.size()+" > "+bol);
 					return bol;
 				}else{
 					return null;

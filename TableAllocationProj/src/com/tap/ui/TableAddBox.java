@@ -17,7 +17,7 @@ import com.tap.bizlogic.OrderLogic;
 import com.tap.locinfo.Status;
 import com.tap.tableordersys.Table;
 
-public class NewTableBox {
+public class TableAddBox {
 	OrderLogic orderLogic;
 	
 	
@@ -26,10 +26,10 @@ public class NewTableBox {
 	private Text textCapacity;
 
 
-	public NewTableBox() {
+	public TableAddBox() {
 		super();
 	}
-	public NewTableBox(OrderLogic orderLogic) {
+	public TableAddBox(OrderLogic orderLogic) {
 		this.orderLogic = orderLogic;
 	}
 
@@ -39,7 +39,7 @@ public class NewTableBox {
 	 */
 	public static void main(String[] args) {
 		try {
-			NewTableBox window = new NewTableBox();
+			TableAddBox window = new TableAddBox();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -404,7 +404,8 @@ public class MainUI {
         RibbonButtonGroup waitSub = new RibbonButtonGroup(rgWait);
         RibbonButton rbNewWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "New wait guest", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "Modify wait guest", RibbonButton.STYLE_NO_DEPRESS);
-        RibbonButton rbDelWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "Delete wait guest", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelAllWait = new RibbonButton(waitSub, ImageCache.getImage("olb_picture.gif"), "Empty wait guest", RibbonButton.STYLE_NO_DEPRESS);
+        rbDelAllWait.addSelectionListener(new btEmptyWaitingListListener());
         //end Wating List group
         //end Order tab
 	}
@@ -635,23 +636,26 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Waiting guest","ID","guest amount","allow to seat alone","addtional infomation"});
-			WaitingList re = orderLogic.getWaitingListOfResturant();
-			if(null!=re){
-				List<Guests> opList = re.getGuestList();
-				for(Guests op:opList){
-					String[] row = new String[]{"",op.getId(),op.getAmountString(),op.getSeatAloneString().toString(),op.getAddtionalInfo()};
-					doGenerateTableItem(row);
-					/*for(String s: row)
-						System.out.print(s);
-					System.out.println();*/
-				}
-				doAddModifyBoxDCListenerToTable("Waiting List");
-			}
-			computeFormSizeForItem(shell.getShell());
-			doFuckingRefresh();
+			refreshWaitingView();
 		}
+	}
+	void refreshWaitingView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Waiting guest","ID","guest amount","allow to seat alone","addtional infomation"});
+		WaitingList re = orderLogic.getWaitingListOfResturant();
+		if(null!=re){
+			List<Guests> opList = re.getGuestList();
+			for(Guests op:opList){
+				String[] row = new String[]{"",op.getId(),op.getAmountString(),op.getSeatAloneString().toString(),op.getAddtionalInfo()};
+				doGenerateTableItem(row);
+				/*for(String s: row)
+					System.out.print(s);
+				System.out.println();*/
+			}
+			doAddModifyBoxDCListenerToTable("Waiting List");
+		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
 	}
 	class btTableViewListener implements SelectionListener{
 		@Override
@@ -728,7 +732,7 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			NewTableBox ntd = new NewTableBox(orderLogic);
+			TableAddBox ntd = new TableAddBox(orderLogic);
 			ntd.open();
 		}
 	}
@@ -739,6 +743,16 @@ public class MainUI {
 		public void widgetSelected(SelectionEvent arg0) {
 			NewBookingBox ntd = new NewBookingBox(orderLogic);
 			ntd.open();
+		}
+	}
+	class btEmptyWaitingListListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			orderLogic.getWaitList().getGuestList().clear();
+			orderLogic.saveWaitingList();
+			refreshWaitingView();
 		}
 	}
 	/**

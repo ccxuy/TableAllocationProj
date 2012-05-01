@@ -60,12 +60,11 @@ public class Table {
 		}
 	}
 	
-	public int addBookOrder(BookOrder o) {
+	public boolean addBookOrder(BookOrder o) {
 		if(null!=o){
-			this.bookOrderList.add(o);
-			return Status.SUCCESS.getValue();
+			return this.bookOrderList.add(o);
 		}else{
-			return Status.FAIL.getValue();
+			return false;
 		}
 	}
 

@@ -123,16 +123,22 @@ public class NewCustomerBox {
 				msgBox.open();
 				return;
 			}
-			List<Order> o = orderLogic.newCustomer(new Guests(text.getText(),text_2.getText() ,amount , false==btnAllowSeatTogether.getSelection()));
+			Guests newGuests = new Guests(text.getText(),text_2.getText() ,amount , false==btnAllowSeatTogether.getSelection());
+			List<Order> o = orderLogic.newCustomer(newGuests);
 			
 			if(null!=o){
 				MessageBox msgBox = new MessageBox(shell, 2);
 				StringBuffer msgContent = new StringBuffer();
-				for(Order or:o){
-					msgContent.append(" "+or.getTable().getId());
+				if(o.size()>0){
+					for(Order or:o){
+						msgContent.append(" "+or.getTable().getId());
+					}
+					msgBox.setMessage("Customer occupied table of "+msgContent);
+					msgBox.open();
+				}else{
+					msgBox.setMessage("Customer added to waiting list.");
+					msgBox.open();
 				}
-				msgBox.setMessage("Customer occupied table of "+msgContent);
-				msgBox.open();
 			}else{
 				MessageBox msgBox = new MessageBox(shell, 2);
 				msgBox.setMessage("Customer should wait until table avalable.");
