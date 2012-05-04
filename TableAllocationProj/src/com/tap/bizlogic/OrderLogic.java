@@ -139,12 +139,14 @@ public class OrderLogic {
 				}
 			}
 		}
-		RestaurantLogic.saveRestauant(restaurant);
 		
-		if(numOfPeople>=0){
+		if(numOfPeople>0){
 			guests.setAmount(numOfPeople);
 			this.waitList.addGuests(guests);
+			loadResturant(restaurant.getName());
 			saveWaitingList();
+		}else{
+			RestaurantLogic.saveRestauant(restaurant);
 		}
 		
 		if(this.lastOrders.size()>=0)
@@ -445,13 +447,27 @@ public class OrderLogic {
 		}
 	}
 	
+	public List<Order> newCustomerFromWaiting(Guests guests) {
+		if(null==guests){
+			System.err.println("newCustomer: null guests!");
+			return null;
+		}
+		boolean addedToTable = addOrder(guests);
+		if(addedToTable){
+			System.out.println("New Customer set new order:"+lastOrders);
+			return lastOrders;
+		}else{
+			return null;
+		}
+	}
+	
 	public List<BookOrder> newBooking(String bookOrderID,Guests guests, DateTime time) {
 		if(null==guests || null==time){
 			System.err.println("newBooking: null==guests || null==time");
 			return null;
 		}
 		DateTime laterThenThisTime = DateTime.now(TimeZone.getDefault());
-		laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
+		//laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
 		if( time.compareTo(laterThenThisTime)<=0 ){
 			System.err.println("newBooking: book time should be later!");
 			return null;

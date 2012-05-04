@@ -158,7 +158,7 @@ public class NewBookingBox {
 					, dateTime_1.getMonth()+1, dateTime_1.getDay(), dateTime.getHours()
 					, dateTime.getMinutes(), 0, 0);
 			hirondelle.date4j.DateTime laterThenThisTime = hirondelle.date4j.DateTime.now(TimeZone.getDefault());
-			laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
+			//laterThenThisTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
 			if( bookTime.compareTo(laterThenThisTime)<=0 ){
 				System.err.println("newBooking: book time should be later!");
 				MessageBox msgBox = new MessageBox(shell, 1);

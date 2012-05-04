@@ -1,5 +1,8 @@
 package com.tap.ui;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -16,6 +19,7 @@ import com.tap.tableordersys.BookOrder;
 import com.tap.tableordersys.Guests;
 import com.tap.tableordersys.Order;
 import com.tap.tableordersys.Table;
+import com.tap.tableordersys.WaitingList;
 
 public class OrderModifyBox {
 	protected Object result;
@@ -185,12 +189,33 @@ public class OrderModifyBox {
 			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
 			boolean change = false;
 			if(null!=o){
-				if(o instanceof BookOrder){
+				/*if(o instanceof BookOrder){
 					BookOrder cOrder = (BookOrder) o;
 					change = o.getTable().deleteBookOrder(cOrder);
-				}else{
+				}else{*/
 					change = o.getTable().deleteOrder(o);
-				}
+					WaitingList waitlist = ol.getWaitList();
+					List<Guests> guestWaitlist = waitlist.getGuestList();
+					Guests handleGuests = null;
+					for(Guests g:guestWaitlist){
+						List<Order> resOrder = ol.newCustomerFromWaiting(g);
+						if(null!=resOrder){
+							MessageBox msgBox = new MessageBox(shell, 2);
+							StringBuffer msgContent = new StringBuffer();
+							if(resOrder.size()>0){
+								for(Order or:resOrder){
+									msgContent.append(" "+or.getTable().getId());
+								}
+								handleGuests = g;
+								msgBox.setMessage("Customer occupied table of "+msgContent);
+								msgBox.open();
+								break;
+							}
+						}
+					}
+					guestWaitlist.remove(handleGuests);
+					ol.saveWaitingList();
+				//}
 			}
 			ol.saveResturant();
 			shell.close();
