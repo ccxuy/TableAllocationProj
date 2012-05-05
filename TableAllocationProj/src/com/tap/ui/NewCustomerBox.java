@@ -91,7 +91,7 @@ public class NewCustomerBox {
 		
 		btnAllowSeatTogether = new Button(shell, SWT.CHECK);
 		btnAllowSeatTogether.setBounds(69, 108, 146, 17);
-		btnAllowSeatTogether.setText("Allow seat together");
+		btnAllowSeatTogether.setText("Allow seat with other customer.");
 		
 		lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setBounds(33, 131, 61, 17);

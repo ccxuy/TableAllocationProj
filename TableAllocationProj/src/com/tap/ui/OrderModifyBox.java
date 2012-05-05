@@ -187,16 +187,20 @@ public class OrderModifyBox {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
-			boolean change = false;
+			
 			if(null!=o){
 				/*if(o instanceof BookOrder){
 					BookOrder cOrder = (BookOrder) o;
 					change = o.getTable().deleteBookOrder(cOrder);
 				}else{*/
-					change = o.getTable().deleteOrder(o);
+					o.getTable().deleteOrder(o);
+					ol.saveResturant();
+					
+					//Assign table for customer in waiting
 					WaitingList waitlist = ol.getWaitList();
 					List<Guests> guestWaitlist = waitlist.getGuestList();
 					Guests handleGuests = null;
+					boolean isAddedWaitCustomerToOrder = false;
 					for(Guests g:guestWaitlist){
 						List<Order> resOrder = ol.newCustomerFromWaiting(g);
 						if(null!=resOrder){
@@ -207,13 +211,15 @@ public class OrderModifyBox {
 									msgContent.append(" "+or.getTable().getId());
 								}
 								handleGuests = g;
-								msgBox.setMessage("Customer occupied table of "+msgContent);
+								isAddedWaitCustomerToOrder = true;
+								msgBox.setMessage("Waiting Customer "+g.getId()+" occupied table of "+msgContent);
 								msgBox.open();
 								break;
 							}
 						}
 					}
-					guestWaitlist.remove(handleGuests);
+					if(isAddedWaitCustomerToOrder)
+						guestWaitlist.remove(handleGuests);
 					ol.saveWaitingList();
 				//}
 			}

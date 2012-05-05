@@ -85,11 +85,14 @@ public class OrderLogic {
 	 * @return
 	 */
 	public boolean addOrder(Guests guests) {
-		lastOrders.clear();
+		if(lastOrders.size()>0){
+			System.out.println("lastOrders really bigger than 0~");
+			lastOrders.clear();
+		}
 		int numOfPeople = guests.getAmount();
-		Table tableCheck = checkNewTableExist(restaurant);
+		Table tableCheck = checkEmptyTableExist(restaurant);
 		
-		System.out.println("assigning table lastOrders:"+lastOrders.size());
+		System.out.println("assigning table. lastOrders:"+lastOrders.size());
 		Order o;
 		while (numOfPeople > 0 && tableCheck != null && tableCheck.getCapacity()>0) {
 			System.out.println("numOfPeople: "+numOfPeople+"\t"+tableCheck);
@@ -107,7 +110,7 @@ public class OrderLogic {
 			tableCheck.getOrderList().add(o);
 			
 			if (numOfPeople > 0) 
-				tableCheck = checkNewTableExist(restaurant);
+				tableCheck = checkEmptyTableExist(restaurant);
 		}
 		
 		System.out.println("dispatching table");
@@ -141,18 +144,23 @@ public class OrderLogic {
 		}
 		
 		if(numOfPeople>0){
-			guests.setAmount(numOfPeople);
 			this.waitList.addGuests(guests);
-			loadResturant(restaurant.getName());
+			loadResturant(restaurant.getName());//restore
 			saveWaitingList();
 		}else{
 			RestaurantLogic.saveRestauant(restaurant);
 		}
 		
-		if(this.lastOrders.size()>=0)
+		assert numOfPeople>=0;
+		if(numOfPeople==0)
 			return true;
-		else
+		else if(numOfPeople>0){
+			lastOrders.clear();
 			return false;
+		}else{
+			System.err.println("Add order error!");
+			return false;
+		}
 	}
 
 	/*
@@ -163,7 +171,7 @@ public class OrderLogic {
 	 * @param restaurant
 	 * @return
 	 */
-	public Table checkNewTableExist(Restaurant restaurant) {
+	public Table checkEmptyTableExist(Restaurant restaurant) {
 		List<Table> tablelist = restaurant.getTableList();
 		for (int i = 0; i < tablelist.size(); i++) {
 			if (tablelist.get(i).countGuestNumberInTable() == 0) {
@@ -435,7 +443,8 @@ public class OrderLogic {
 					System.out.println("New Customer set new order:"+lastOrders);
 					return lastOrders;
 				}else{
-					return null;
+					System.out.println("New Customer add to waiting list!");
+					return lastOrders;
 				}
 			}else{
 				System.err.println("newCustomer: guest already waiting, try another id");
@@ -449,15 +458,16 @@ public class OrderLogic {
 	
 	public List<Order> newCustomerFromWaiting(Guests guests) {
 		if(null==guests){
-			System.err.println("newCustomer: null guests!");
+			System.err.println("newCustomerFromWaiting: null guests!");
 			return null;
 		}
 		boolean addedToTable = addOrder(guests);
 		if(addedToTable){
-			System.out.println("New Customer set new order:"+lastOrders);
+			System.out.println("Waiting Customer set new order:"+lastOrders);
 			return lastOrders;
 		}else{
-			return null;
+			System.out.println("Waiting Customer can't find table suitable.");
+			return lastOrders;
 		}
 	}
 	
