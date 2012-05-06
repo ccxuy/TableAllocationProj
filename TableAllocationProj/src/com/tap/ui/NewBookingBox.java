@@ -186,6 +186,7 @@ public class NewBookingBox {
 				msgBox.setMessage("Not enough table avalable at time:"+bookTime+".");
 				msgBox.open();
 			}
+			orderLogic.saveResturant();
 			mainUI.doRefreshCurrentTableView();
 			shell.close();
 		}
