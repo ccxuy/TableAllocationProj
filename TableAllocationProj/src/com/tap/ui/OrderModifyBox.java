@@ -87,50 +87,50 @@ public class OrderModifyBox {
 		if(null==order)return;
 		
 		Label lblNewLabel = new Label(shell, SWT.NONE);
-		lblNewLabel.setBounds(33, 39, 61, 17);
+		lblNewLabel.setBounds(33, 23, 61, 17);
 		lblNewLabel.setText("ID:");
 		
 		if(null==order.getOrderID())return;
 		textOrderID = new Text(shell, SWT.BORDER);
-		textOrderID.setBounds(141, 36, 73, 23);
+		textOrderID.setBounds(141, 20, 73, 23);
 		textOrderID.setText(order.getOrderID());
 		textOrderID.setEnabled(modifyID);
 		
 		Label lblNewLabel_1 = new Label(shell, SWT.NONE);
-		lblNewLabel_1.setBounds(33, 72, 61, 17);
+		lblNewLabel_1.setBounds(33, 58, 61, 17);
 		lblNewLabel_1.setText("Operator:");
 		
 		textOperatorID = new Text(shell, SWT.BORDER);
-		textOperatorID.setBounds(141, 72, 73, 23);
+		textOperatorID.setBounds(141, 55, 73, 23);
 		if(null!=order.getOperatorID())
 			textOperatorID.setText(order.getOperatorID());
 		textOperatorID.setEnabled(false);
 		
 		Label lblNewLabel_2 = new Label(shell, SWT.NONE);
-		lblNewLabel_2.setBounds(33, 107, 61, 17);
+		lblNewLabel_2.setBounds(33, 94, 61, 17);
 		lblNewLabel_2.setText("Table ID:");
 		
 		textTableID = new Text(shell, SWT.BORDER);
-		textTableID.setBounds(141, 101, 73, 23);
+		textTableID.setBounds(141, 91, 73, 23);
 		if(null!=order.getTable())
 			textTableID.setText(order.getTable().getId());
 
 		Label lblNewLabel_3 = new Label(shell, SWT.NONE);
-		lblNewLabel_3.setBounds(33, 139, 61, 17);
+		lblNewLabel_3.setBounds(33, 123, 61, 17);
 		lblNewLabel_3.setText("Guest ID:");
 		
 		textGusetsID = new Text(shell, SWT.BORDER);
-		textGusetsID.setBounds(141, 133, 73, 23);
+		textGusetsID.setBounds(141, 120, 73, 23);
 		textGusetsID.setEnabled(false);
 		if(null!=order.getGusets())
 			textGusetsID.setText(order.getGusets().getId());
 
 		Label lblNewLabel_4 = new Label(shell, SWT.NONE);
-		lblNewLabel_4.setBounds(33, 178, 73, 17);
+		lblNewLabel_4.setBounds(33, 152, 73, 17);
 		lblNewLabel_4.setText("Guest amout:");
 		
 		textGusetsAmount = new Text(shell, SWT.BORDER);
-		textGusetsAmount.setBounds(141, 172, 73, 23);
+		textGusetsAmount.setBounds(141, 149, 73, 23);
 		if(null!=order.getGusets())
 			textGusetsAmount.setText(order.getGusets().getAmountString());
 		
@@ -152,6 +152,10 @@ public class OrderModifyBox {
 		Button btnDelete = new Button(shell, SWT.NONE);
 		btnDelete.setBounds(141, 232, 80, 27);
 		btnDelete.setText("Check out");
+		
+		Label lblAttentionModificationHere = new Label(shell, SWT.NONE);
+		lblAttentionModificationHere.setBounds(20, 195, 254, 17);
+		lblAttentionModificationHere.setText("Attention: Modification here is not restrict.");
 		btnDelete.addSelectionListener(new btCheckOutListener());
 
 	}
@@ -190,7 +194,8 @@ public class OrderModifyBox {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
-			
+
+			int msgBoxResult=0;
 			if(null!=o){
 				/*if(o instanceof BookOrder){
 					BookOrder cOrder = (BookOrder) o;
@@ -207,7 +212,7 @@ public class OrderModifyBox {
 					for(Guests g:guestWaitlist){
 						List<Order> resOrder = ol.newCustomerFromWaiting(g);
 						if(null!=resOrder){
-							MessageBox msgBox = new MessageBox(shell, 2);
+							MessageBox msgBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK);
 							StringBuffer msgContent = new StringBuffer();
 							if(resOrder.size()>0){
 								for(Order or:resOrder){
@@ -215,8 +220,8 @@ public class OrderModifyBox {
 								}
 								handleGuests = g;
 								isAddedWaitCustomerToOrder = true;
-								msgBox.setMessage("Waiting Customer "+g.getId()+" occupied table of "+msgContent);
-								msgBox.open();
+								msgBox.setMessage("Waiting Customer "+g.getId()+" occupied table of "+msgContent+", is that ok?");
+								msgBoxResult = msgBox.open();
 								break;
 							}
 						}
@@ -226,7 +231,11 @@ public class OrderModifyBox {
 					ol.saveWaitingList();
 				//}
 			}
-			ol.saveResturant();
+			//if(msgBoxResult==SWT.OK){
+				ol.saveResturant();
+			/*}else{
+				ol.loadResturant();
+			}*/
 			shell.close();
 			mainUI.doRefreshCurrentTableView();
 		}

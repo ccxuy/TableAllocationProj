@@ -1,7 +1,11 @@
 package com.tap.tableordersys;
 
+import hirondelle.date4j.DateTime;
+import hirondelle.date4j.DateTime.DayOverflow;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.tap.locinfo.Status;
 
@@ -172,6 +176,29 @@ public class Table {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean canBookTime(DateTime time){
+		boolean canbook = true;
+		for(Order o:orderList){
+			if(o.state==Status.ORDER_STATE_ORDERD.getValue()){
+				DateTime aftertime = DateTime.now(TimeZone.getDefault());
+				aftertime = aftertime.plus(0, 0, 0, 2, 0, 0, DayOverflow.Spillover);
+				canbook = time.compareTo(aftertime)>=0;
+				System.out.println("Table "+this.id+" cannot book because someone seat here, try book later.");
+				break;
+			}
+		}
+		for(BookOrder bo: bookOrderList){
+			if(bo.state==Status.ORDER_STATE_INIT.getValue()){
+				if(false== bo.canBookTime(time)){
+					canbook = false;
+					System.out.println("Table "+this.id+" cannot book because someone booked, try book later.");
+					break;
+				}
+			}
+		}
+		return canbook;
 	}
 	
 	public int doEmptyOrderList() {

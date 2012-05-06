@@ -47,11 +47,23 @@ public class BookOrder extends Order {
 	public boolean canBookTime(DateTime time){
 		DateTime headTime = new DateTime(bookTime.toString());
 		DateTime tailTime = new DateTime(bookTime.toString());
-		headTime.minus(0, 0, 0, 2, 0, 0, DayOverflow.Spillover);
-		tailTime.plus(0, 0, 0, 2, 0, 0, DayOverflow.Spillover);
-		System.out.println("canBookTime: "+" <  "+headTime+time+tailTime+"  < ");
+		headTime = headTime.minus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
+		tailTime = tailTime.plus(0, 0, 0, +2, 0, 0, DayOverflow.Spillover);
 		if( false== (headTime.compareTo(time)<=0 &&
 				tailTime.compareTo(time)>=0) ){
+			return true;
+		}
+		return false;
+	}
+
+	public boolean canCheckInTime(DateTime now) {
+		DateTime headTime = new DateTime(bookTime.toString());
+		DateTime tailTime = new DateTime(bookTime.toString());
+		headTime = headTime.minus(0, 0, 0, 1, 0, 0, DayOverflow.Spillover);
+		tailTime = tailTime.plus(0, 0, 0, 1, 0, 0, DayOverflow.Spillover);
+		System.out.println("canCheckInTime: "+headTime+" <  "+now+"  < "+tailTime);
+		if( false== (headTime.compareTo(now)<=0 &&
+				tailTime.compareTo(now)>=0) ){
 			return true;
 		}
 		return false;

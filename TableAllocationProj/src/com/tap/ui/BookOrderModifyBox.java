@@ -233,18 +233,16 @@ public class BookOrderModifyBox {
 				if(o instanceof BookOrder){
 					BookOrder cOrder = (BookOrder) o;
 					DateTime now = DateTime.now(TimeZone.getDefault());
-					if(false==cOrder.canBookTime(now)){//Means is in his book time
-						
+					if(true==cOrder.canCheckInTime(now)){
+						cOrder.checkIn();
+						change = cOrder.getTable().deleteBookOrder(cOrder);
+						cOrder.getTable().addOrder(cOrder);
 					}else{
 						MessageBox msgBox = new MessageBox(shell, 1);
 						msgBox.setMessage("Check in fail, only check in in booked time:"+cOrder.getBookTime()+"!");
 						msgBox.open();
 						return;
 					}
-					cOrder.checkIn();
-					change = cOrder.getTable().deleteBookOrder(cOrder);
-					cOrder.getTable().addOrder(cOrder);
-					
 				}
 			}
 			ol.saveResturant();

@@ -319,7 +319,7 @@ public class MainUI {
 		for(String s: columnStrings){
 			final TableColumn newColumnTableColumn = new TableColumn(table,
 					SWT.NONE);
-			newColumnTableColumn.setWidth(100);
+			newColumnTableColumn.setWidth(107);
 			newColumnTableColumn.setText(s);
 		}
 	}
@@ -399,8 +399,9 @@ public class MainUI {
         RibbonButtonGroup bookSub = new RibbonButtonGroup(rgBook);
         RibbonButton rbNewBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "New Book", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Modify Book", RibbonButton.STYLE_NO_DEPRESS);
-        RibbonButton rbDelBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Delete Book", RibbonButton.STYLE_NO_DEPRESS);
+        RibbonButton rbDelBook = new RibbonButton(bookSub, ImageCache.getImage("olb_picture.gif"), "Empty book order", RibbonButton.STYLE_NO_DEPRESS);
         rbNewBook.addSelectionListener(new btNewBookingListener());
+        rbDelBook.addSelectionListener(new btEmptyBookingListListener());
         //end Booking group
         
         //Wating List group 
@@ -760,6 +761,18 @@ public class MainUI {
 		public void widgetSelected(SelectionEvent arg0) {
 			NewBookingBox ntd = new NewBookingBox(mainUI, orderLogic);
 			ntd.open();
+		}
+	}
+	class btEmptyBookingListListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			for(com.tap.tableordersys.Table t:orderLogic.getRestaurant().getTableList()){
+				t.getBookOrderList().clear();
+			}
+			orderLogic.saveResturant();
+			refreshBookView();
 		}
 	}
 	class btNewTableListener implements SelectionListener{

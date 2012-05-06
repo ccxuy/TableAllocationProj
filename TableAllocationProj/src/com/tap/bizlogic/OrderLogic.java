@@ -301,7 +301,9 @@ public class OrderLogic {
 			db.close();
 		}
 	}
-	
+	public void loadResturant(){
+		this.restaurant = RestaurantLogic.getRestaurant(restaurant.getName());
+	}
 	public void loadResturant(String restaurantName){
 		this.restaurant = RestaurantLogic.getRestaurant(restaurantName);
 	}
@@ -490,12 +492,13 @@ public class OrderLogic {
 				BookOrder bo;
 				int leftAmount = guests.getAmount();
 				for(Table table:this.restaurant.getTableList()){
-					canBook = true;
-					for(BookOrder boGetFromTable:table.getBookOrderList()){
+					//canBook = true;
+					canBook = table.canBookTime(time);
+					/*for(BookOrder boGetFromTable:table.getBookOrderList()){
 						if(false == boGetFromTable.canBookTime(time)){
 							canBook = false;
 						}
-					}
+					}*/
 					if(canBook==true){
 						Guests subGuests = new Guests(guests.getId());
 						subGuests.setSeatAlone(guests.getSeatAlone());
