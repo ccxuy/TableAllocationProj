@@ -90,6 +90,14 @@ public class Restaurant{
 		return tableList;
 	}
 	
+	public int doCleanOutOfTimeBookOrder(){
+		int cleanNum = 0;
+		for(Table t: tableList){
+			cleanNum += t.doCleanOutOfDateBookOrders();
+		}
+		return cleanNum;
+	}
+	
 	public Table findTableByID(String tid){
 		for(Table t:this.tableList){
 			if(t.getId().equals(tid)){

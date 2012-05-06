@@ -89,6 +89,8 @@ public class MainUI {
 	Table table = null;
 	TableCursor tCursor;
 	MessageBox msgBox = null;
+	
+	RibbonTabFolder ftf;
 	//Home tab
 	RibbonTab ftHome = null;
 	RibbonGroup tabGroupAccount = null;
@@ -103,7 +105,14 @@ public class MainUI {
 	RibbonGroup tabGroupQuickLaunch = null;
 	//Order tab
 	RibbonTab ftOrder = null;
+	RibbonGroup rgOrder;
+	RibbonGroup rgBook;
+	RibbonGroup rgWait;
+	//TableStaffHist tab
 	RibbonTab ftTable = null;
+	RibbonGroup rgTable;
+	RibbonGroup rgStaff;
+	RibbonGroup rgHistory;
 	
 	//=======Logic stuff========
 	private OperatorLogic opLogic = new OperatorLogic();
@@ -164,25 +173,23 @@ public class MainUI {
         
         // Tab folder
         //final RibbonTabFolder ftf = new RibbonTabFolder(inner, SWT.NONE);
-        RibbonTabFolder ftf = shell.getRibbonTabFolder();
+        ftf = shell.getRibbonTabFolder();
         ftf.setHelpImage(ImageCache.getImage("questionmark.gif"));
         ftf.getHelpButton().setToolTip(new RibbonTooltip("Help", "Get Help Using Whatever This Is"));
-        
-        //ftf.setDrawEmptyTabs(false);
-        // Tabs
-        ftHome = new RibbonTab(ftf, "Home");
-        ftOrder = new RibbonTab(ftf, "Ordering");
-        ftTable = new RibbonTab(ftf, "Table, Staff and History");
         
         // Tooltip
         RibbonTooltip toolTip = new RibbonTooltip("Some Action Title", "This is content text that\nsplits over\nmore than one\nline\n\\b\\c255000000and \\xhas \\bdifferent \\c000000200look \\xand \\bfeel.", ImageCache.getImage("tooltip.jpg"), ImageCache.getImage("questionmark.gif"), "Press F1 for more help"); 
 
-        // Group
+        //ftf.setDrawEmptyTabs(false);
 
-        doGenerateHomeTab(ftHome);
-              
-        doGenerateOrderingTab(ftOrder);
+		// Tabs
+        ftHome = new RibbonTab(ftf, "Home");
+        ftOrder = new RibbonTab(ftf, "Ordering");
+        ftTable = new RibbonTab(ftf, "Table, Staff and History");
         
+        // Group
+        doGenerateHomeTab(ftHome);
+        doGenerateOrderingTab(ftOrder);
         doGenerateTableStaffHistTab(ftTable);
         
         //Actions for the UI
@@ -345,7 +352,7 @@ public class MainUI {
 	private void doGenerateTableStaffHistTab(RibbonTab ftTable) {
 		//Tab Table, Staff and History (only for admin)
         //Group Table Management
-        RibbonGroup rgTable = new RibbonGroup(ftTable, "Table Management");
+        rgTable = new RibbonGroup(ftTable, "Table Management");
         //new Image(null, "newOder.gif")
         RibbonButton rbTableView = new RibbonButton(rgTable, ImageCache.getImage("olb_picture.gif"), "Table View", RibbonButton.STYLE_NO_DEPRESS);
         rbTableView.addSelectionListener(new btTableViewListener());
@@ -357,7 +364,7 @@ public class MainUI {
         rbNewTable.addSelectionListener(new btNewTableListener());
         //end Booking group
         //Group Staff Management
-        RibbonGroup rgStaff = new RibbonGroup(ftTable, "Staff Management");
+        rgStaff = new RibbonGroup(ftTable, "Staff Management");
         //new Image(null, "newOder.gif")
         RibbonButton rbStaffView = new RibbonButton(rgStaff, ImageCache.getImage("olb_picture.gif"), "Staff View", RibbonButton.STYLE_NO_DEPRESS);
         rbStaffView.addSelectionListener(new btStaffViewListener());
@@ -366,9 +373,10 @@ public class MainUI {
         RibbonButton rbNewStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "New Staff", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbModifyStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "Modify Staff", RibbonButton.STYLE_NO_DEPRESS);
         RibbonButton rbDelStaff = new RibbonButton(staffSub, ImageCache.getImage("olb_picture.gif"), "Delete Staff", RibbonButton.STYLE_NO_DEPRESS);
+        rbNewStaff.addSelectionListener(new btNewStaffListener());
         //end Booking group
         //Group Staff Management
-        RibbonGroup rgHistory = new RibbonGroup(ftTable, "History");
+        rgHistory = new RibbonGroup(ftTable, "History");
         //new Image(null, "newOder.gif")
         RibbonButton rbHistoryView = new RibbonButton(rgHistory, ImageCache.getImage("olb_picture.gif"), "History View", RibbonButton.STYLE_NO_DEPRESS);
         //end Booking group
@@ -378,7 +386,7 @@ public class MainUI {
 		//Ordering
         //[DONE] Ordering
         //Order group 
-        RibbonGroup rgOrder = new RibbonGroup(ftOrder, "Current");
+        rgOrder = new RibbonGroup(ftOrder, "Current");
         //new Image(null, "newOder.gif")
         RibbonButton btOrderView = new RibbonButton(rgOrder, ImageCache.getImage("olb_picture.gif"), "Order View", RibbonButton.STYLE_NO_DEPRESS);
         btOrderView.addSelectionListener(new btOrderViewListener());
@@ -391,7 +399,7 @@ public class MainUI {
         //end Order group
         
         //Booking group 
-        RibbonGroup rgBook = new RibbonGroup(ftOrder, "Booking");
+        rgBook = new RibbonGroup(ftOrder, "Booking");
         //new Image(null, "newOder.gif")
         RibbonButton rbNewBookView = new RibbonButton(rgBook, ImageCache.getImage("olb_picture.gif"), "Booking View", RibbonButton.STYLE_NO_DEPRESS);
         rbNewBookView.addSelectionListener(new btBookingViewListener());
@@ -405,7 +413,7 @@ public class MainUI {
         //end Booking group
         
         //Wating List group 
-        RibbonGroup rgWait = new RibbonGroup(ftOrder, "Wating List");
+        rgWait = new RibbonGroup(ftOrder, "Wating List");
         //new Image(null, "newOder.gif")
         RibbonButton rbNewWaitView = new RibbonButton(rgWait, ImageCache.getImage("olb_picture.gif"), "Waiting View", RibbonButton.STYLE_NO_DEPRESS);
         rbNewWaitView.addSelectionListener(new btWaitingViewListener());
@@ -505,6 +513,7 @@ public class MainUI {
 		doCleanUserLoginInfo();
 		//System.out.println("login?"+this.opLogic.isLogined());
 		if(this.opLogic.isLogined()){
+			
 			userID.dispose();
 			userPostion.dispose();
 			btLogoutBut.dispose();
@@ -525,6 +534,11 @@ public class MainUI {
 			if(opLogic.isAdmin()){
 				this.ftTable.setVisible(true);
 			}
+			/*this.ftOrder.enable();
+			if(opLogic.isAdmin()){
+				this.ftTable.enable();
+			}*/
+	        
 			doFuckingRefresh();
 			//OrderModifyDialog omDialog = new OrderModifyDialog(shell.getShell(), SWT.INHERIT_DEFAULT);
 			//omDialog.open();
@@ -619,6 +633,9 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
+			orderLogic.getRestaurant().doCleanOutOfTimeBookOrder();
+			orderLogic.saveResturant();
+			
 			refreshBookView();
 			tableView = TableView.Book;
 		}
@@ -784,6 +801,15 @@ public class MainUI {
 			ntd.open();
 		}
 	}
+	class btNewStaffListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			NewStaffBox ntd = new NewStaffBox(mainUI, opLogic);
+			ntd.open();
+		}
+	}
 	class btModifyOrderListener implements SelectionListener{
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
@@ -863,7 +889,7 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			Operator bo = opLogic.findOperatorByID(ti.getText(1));
-			StaffModifyBox ntd = new StaffModifyBox(bo, opLogic);
+			StaffModifyBox ntd = new StaffModifyBox(bo,mainUI, opLogic);
 			ntd.open();
 		}
 		@Override

@@ -220,6 +220,15 @@ public class Table {
 		return Status.SUCCESS.getValue();
 	}
 	
+	public int doCleanOutOfDateBookOrders(){
+		LinkedList<BookOrder> bol = new LinkedList<BookOrder>();
+		for(BookOrder bo:this.bookOrderList){
+			if(bo.isOutOfTime())bol.add(bo);
+		}
+		int cleanNum = bol.size();
+		this.bookOrderList.removeAll(bol);
+		return cleanNum;
+	}
 
 	@Override
 	public Table clone(){

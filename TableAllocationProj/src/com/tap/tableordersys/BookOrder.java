@@ -6,6 +6,7 @@ import hirondelle.date4j.DateTime.DayOverflow;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.tap.locinfo.Setting;
 import com.tap.locinfo.Status;
 import com.tap.usersys.Operator;
 
@@ -59,10 +60,10 @@ public class BookOrder extends Order {
 	public boolean canCheckInTime(DateTime now) {
 		DateTime headTime = new DateTime(bookTime.toString());
 		DateTime tailTime = new DateTime(bookTime.toString());
-		headTime = headTime.minus(0, 0, 0, 1, 0, 0, DayOverflow.Spillover);
-		tailTime = tailTime.plus(0, 0, 0, 1, 0, 0, DayOverflow.Spillover);
+		headTime = headTime.minus(0, 0, 0, 0, 15, 0, DayOverflow.Spillover);
+		tailTime = tailTime.plus(0, 0, 0, 0, 15, 0, DayOverflow.Spillover);
 		System.out.println("canCheckInTime: "+headTime+" <  "+now+"  < "+tailTime);
-		if( false== (headTime.compareTo(now)<=0 &&
+		if( true== (headTime.compareTo(now)<=0 &&
 				tailTime.compareTo(now)>=0) ){
 			return true;
 		}
@@ -70,8 +71,10 @@ public class BookOrder extends Order {
 	}
 	 
 	public boolean isOutOfTime() {
-		DateTime now = DateTime.now(TimeZone.getDefault());
-		if( 0<now.compareTo(bookTime)){
+		DateTime obsoleteTime = DateTime.now(TimeZone.getDefault());
+		obsoleteTime = obsoleteTime.plus(0, 0, 0, 0, Setting.obsoleteMinitesOfBookOrder, 0
+				, DayOverflow.Spillover);
+		if( 0<obsoleteTime.compareTo(bookTime)){
 			return true;
 		}
 		return false;

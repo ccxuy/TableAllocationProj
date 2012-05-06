@@ -17,9 +17,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Button;
 
-public class StaffModifyBox {
+public class NewStaffBox {
 	private OperatorLogic ol;
-	private Operator cOperator;
 
 	protected Shell shell;
 	private Text textID;
@@ -27,15 +26,14 @@ public class StaffModifyBox {
 	private Combo combo;
 	private MainUI mainUI;
 
-	public StaffModifyBox() {
+	public NewStaffBox() {
 		super();
 	}
 
-	public StaffModifyBox(Operator cOperator,MainUI mainUI, OperatorLogic ol) {
+	public NewStaffBox(MainUI mainUI, OperatorLogic ol) {
 		super();
 		this.ol = ol;
 		this.mainUI = mainUI;
-		this.cOperator = cOperator;
 	}
 
 
@@ -46,7 +44,7 @@ public class StaffModifyBox {
 	 */
 	public static void main(String[] args) {
 		try {
-			StaffModifyBox window = new StaffModifyBox();
+			NewStaffBox window = new NewStaffBox();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -83,7 +81,6 @@ public class StaffModifyBox {
 		
 		textID = new Text(shell, SWT.BORDER);
 		textID.setBounds(175, 37, 104, 23);
-		textID.setText(cOperator.getId());
 		
 		Label lblPassword = new Label(shell, SWT.NONE);
 		lblPassword.setBounds(49, 86, 61, 17);
@@ -92,7 +89,6 @@ public class StaffModifyBox {
 		textPassword = new Text(shell, SWT.BORDER);
 		textPassword.setBounds(175, 83, 104, 23);
 		textPassword.setEchoChar('●');
-		textPassword.setText(cOperator.getPassword());
 		
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setBounds(49, 137, 61, 17);
@@ -100,40 +96,26 @@ public class StaffModifyBox {
 		
 		combo = new Combo(shell, SWT.NONE);
 		combo.setBounds(175, 134, 104, 25);
-		int select = 0;
-		int i = 0;
 		for(Position p:Operator.Position.values()){
 			combo.add(p.getString());
-			if(cOperator.getPosition().equals(p.getString()))
-				select = i;
-			i++;
 		}
-		combo.select(select);
 		
 		Button btnSave = new Button(shell, SWT.NONE);
 		btnSave.setBounds(49, 201, 80, 27);
-		btnSave.setText("Save");
-		btnSave.addSelectionListener(new btSaveListener());
-		
-		Button btnDelete = new Button(shell, SWT.NONE);
-		btnDelete.setBounds(182, 201, 80, 27);
-		btnDelete.setText("Delete");
-		btnDelete.addSelectionListener(new btDeleteListener());
+		btnSave.setText("Add");
+		btnSave.addSelectionListener(new btAddListener());
 	}
-	class btSaveListener implements SelectionListener{
+	class btAddListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Operator mOp = ol.findOperatorByID(textID.getText());
-			if(mOp==null){
+			if(mOp!=null){
 				MessageBox msgBox = new MessageBox(shell, 1);
-				msgBox.setMessage("No such member exist in system!");
+				msgBox.setMessage("Member already exist in system!");
 				msgBox.open();
 				return;
 			}
 
-			ol.deleteOperator(mOp.getId());
-			mOp.setId(textID.getText());
-			mOp.setPassword(textPassword.getText());
 			String position = combo.getText();
 			boolean correctPosition = false;
 			for(Position p:Operator.Position.values()){
@@ -146,26 +128,8 @@ public class StaffModifyBox {
 				msgBox.open();
 				return;
 			}
-			mOp.setPosition(combo.getText());
-			ol.register(mOp.getId(), mOp.getPassword(), mOp.getPosition());
-			shell.close();
-			mainUI.doRefreshCurrentTableView();
-		}
-		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {}
-	}
-	class btDeleteListener implements SelectionListener{
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			Operator mOp = ol.findOperatorByID(textID.getText());
-			if(mOp==null){
-				MessageBox msgBox = new MessageBox(shell, 1);
-				msgBox.setMessage("No such member exist in system!");
-				msgBox.open();
-				return;
-			}
-
-			ol.deleteOperator(mOp.getId());
+			
+			ol.register(textID.getText(), textPassword.getText(), position);
 			shell.close();
 			mainUI.doRefreshCurrentTableView();
 		}

@@ -152,11 +152,11 @@ public class OrderModifyBox {
 		Button btnDelete = new Button(shell, SWT.NONE);
 		btnDelete.setBounds(141, 232, 80, 27);
 		btnDelete.setText("Check out");
+		btnDelete.addSelectionListener(new btCheckOutListener());
 		
 		Label lblAttentionModificationHere = new Label(shell, SWT.NONE);
 		lblAttentionModificationHere.setBounds(20, 195, 254, 17);
 		lblAttentionModificationHere.setText("Attention: Modification here is not restrict.");
-		btnDelete.addSelectionListener(new btCheckOutListener());
 
 	}
 

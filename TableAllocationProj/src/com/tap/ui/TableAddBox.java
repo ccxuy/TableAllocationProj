@@ -98,7 +98,15 @@ public class TableAddBox {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			try{
-				Table newTable = new Table(textTableID.getText(), new Integer(textCapacity.getText()));
+				int capacity = new Integer(textCapacity.getText());
+				if(capacity<=0){
+					MessageBox msgBox = new MessageBox(shell, 1);
+					msgBox.setMessage("Capacity incorrect!");
+					msgBox.open();
+					return;
+				}
+				
+				Table newTable = new Table(textTableID.getText(), capacity);
 				int change = orderLogic.getRestaurant().addTable(newTable);
 				orderLogic.saveResturant();
 				if(change==Status.SUCCESS.getValue()){

@@ -133,4 +133,17 @@ public class OperatorLogic {
 			db.close();
 		}
 	}
+	public boolean deleteOperator(String id){
+		ObjectContainer db = DataControl.getOCDB(Operator.class);
+		try{
+			List<Operator> oplist = db.queryByExample(new Operator(id));
+			boolean deleted = oplist.size()>0;
+			for(Operator o : oplist){
+				db.delete(o);
+			}
+			return deleted;
+		}finally{
+			db.close();
+		}
+	}
 }
