@@ -19,6 +19,7 @@ import com.tap.bizlogic.*;
 import com.tap.tableordersys.*;
 
 public class BookOrderModifyBox {
+	private MainUI mainUI;
 	protected Object result;
 	private Text textOrderID;
 	private Text textOperatorID;
@@ -34,8 +35,9 @@ public class BookOrderModifyBox {
 	protected Shell shell;
 
 	public BookOrderModifyBox() {}
-	public BookOrderModifyBox(Order o,OrderLogic ol) {
+	public BookOrderModifyBox(Order o,MainUI mainUI, OrderLogic ol) {
 		this.order = o;
+		this.mainUI = mainUI;
 		this.ol = ol;
 	}
 	public BookOrderModifyBox(boolean modifyID) {
@@ -189,6 +191,7 @@ public class BookOrderModifyBox {
 			}
 			ol.saveResturant();
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
@@ -215,6 +218,7 @@ public class BookOrderModifyBox {
 			}
 			ol.saveResturant();
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
@@ -245,6 +249,7 @@ public class BookOrderModifyBox {
 			}
 			ol.saveResturant();
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}

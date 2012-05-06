@@ -30,6 +30,7 @@ public class OrderModifyBox {
 	private Text textGusetsAmount;
 	private Text textBookTime;
 	
+	private MainUI mainUI;
 	private Order order;
 	private OrderLogic ol;
 	boolean modifyID=false;
@@ -37,8 +38,9 @@ public class OrderModifyBox {
 	protected Shell shell;
 
 	public OrderModifyBox() {}
-	public OrderModifyBox(Order o,OrderLogic ol) {
+	public OrderModifyBox(Order o,MainUI mainUI, OrderLogic ol) {
 		this.order = o;
+		this.mainUI = mainUI;
 		this.ol = ol;
 	}
 	public OrderModifyBox(boolean modifyID) {
@@ -179,6 +181,7 @@ public class OrderModifyBox {
 			
 			ol.saveResturant();
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
@@ -225,6 +228,7 @@ public class OrderModifyBox {
 			}
 			ol.saveResturant();
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}

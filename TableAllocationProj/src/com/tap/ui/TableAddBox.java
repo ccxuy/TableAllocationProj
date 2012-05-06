@@ -20,7 +20,7 @@ import com.tap.tableordersys.Table;
 public class TableAddBox {
 	OrderLogic orderLogic;
 	
-	
+	private MainUI mainUI;
 	protected Shell shell;
 	private Text textTableID;
 	private Text textCapacity;
@@ -29,8 +29,9 @@ public class TableAddBox {
 	public TableAddBox() {
 		super();
 	}
-	public TableAddBox(OrderLogic orderLogic) {
+	public TableAddBox(MainUI mainUI, OrderLogic orderLogic) {
 		this.orderLogic = orderLogic;
+		this.mainUI = mainUI;
 	}
 
 	/**
@@ -113,6 +114,7 @@ public class TableAddBox {
 				msgBox.open();
 			}
 			shell.close();
+			mainUI.doRefreshCurrentTableView();
 		}
 	}
 }

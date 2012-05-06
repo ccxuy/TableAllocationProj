@@ -27,6 +27,7 @@ import com.tap.usersys.Operator;
 
 public class NewBookingBox {
 
+	private MainUI mainUI;
 	private OrderLogic orderLogic;
 	protected Shell shell;
 	private Text textGuestID;
@@ -38,9 +39,10 @@ public class NewBookingBox {
 	Button buttonAllowSeatTogether;
 
 	public NewBookingBox(){}
-	public NewBookingBox(OrderLogic orderLogic) {
+	public NewBookingBox(MainUI mainUI, OrderLogic orderLogic) {
 		super();
 		this.orderLogic = orderLogic;
+		this.mainUI = mainUI;
 	}
 
 	/**
@@ -184,6 +186,7 @@ public class NewBookingBox {
 				msgBox.setMessage("Not enough table avalable at time:"+bookTime+".");
 				msgBox.open();
 			}
+			mainUI.doRefreshCurrentTableView();
 			shell.close();
 		}
 		@Override

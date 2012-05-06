@@ -20,6 +20,7 @@ import com.tap.tableordersys.Order;
 
 public class NewCustomerBox {
 
+	private MainUI mainUI;
 	private OrderLogic orderLogic;
 	protected Shell shell;
 	private Text text;
@@ -29,8 +30,9 @@ public class NewCustomerBox {
 	private Label lblNewLabel;
 
 	public NewCustomerBox() {}
-	public NewCustomerBox(OrderLogic orderLogic) {
+	public NewCustomerBox(MainUI mainUI, OrderLogic orderLogic) {
 		this.orderLogic = orderLogic;
+		this.mainUI = mainUI;
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class NewCustomerBox {
 		lblGuestId.setText("Guest ID");
 		
 		text = new Text(shell, SWT.BORDER);
-		text.setBounds(167, 42, 73, 23);
+		text.setBounds(167, 42, 100, 23);
 		text.setText(UUID.randomUUID().toString().substring(0, 3));
 		
 		Label lblGuestAmount = new Label(shell, SWT.NONE);
@@ -83,15 +85,15 @@ public class NewCustomerBox {
 		lblGuestAmount.setText("Guest amount");
 		
 		text_1 = new Text(shell, SWT.BORDER);
-		text_1.setBounds(167, 71, 73, 23);
+		text_1.setBounds(167, 71, 100, 23);
 		
 		Button btnCommit = new Button(shell, SWT.NONE);
 		btnCommit.setBounds(103, 211, 80, 27);
 		btnCommit.setText("Commit");
 		
 		btnAllowSeatTogether = new Button(shell, SWT.CHECK);
-		btnAllowSeatTogether.setBounds(69, 108, 146, 17);
-		btnAllowSeatTogether.setText("Allow seat with other customer.");
+		btnAllowSeatTogether.setBounds(69, 108, 219, 17);
+		btnAllowSeatTogether.setText("Allow to seat with other customer.");
 		
 		lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setBounds(33, 131, 61, 17);
@@ -99,7 +101,7 @@ public class NewCustomerBox {
 		btnCommit.addSelectionListener(new btnCommitForNewCustomerListener());
 
 		text_2 = new Text(shell, SWT.BORDER);
-		text_2.setBounds(33, 154, 207, 23);
+		text_2.setBounds(33, 154, 255, 23);
 	}
 	
 	class btnCommitForNewCustomerListener implements SelectionListener{
@@ -144,6 +146,7 @@ public class NewCustomerBox {
 				msgBox.setMessage("Customer should wait until table avalable.");
 				msgBox.open();
 			}
+			mainUI.doRefreshCurrentTableView();
 			shell.close();
 		}
 	}

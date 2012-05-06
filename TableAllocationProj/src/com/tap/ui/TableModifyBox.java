@@ -12,6 +12,7 @@ import com.tap.bizlogic.OrderLogic;
 import com.tap.tableordersys.Table;
 
 public class TableModifyBox {
+	private MainUI mainUI;
 	private OrderLogic ol;
 	private Table cTable;
 
@@ -24,9 +25,10 @@ public class TableModifyBox {
 		super();
 	}
 
-	public TableModifyBox(Table t, OrderLogic ol) {
+	public TableModifyBox(Table t, MainUI mainUI, OrderLogic ol) {
 		super();
 		this.ol = ol;
+		this.mainUI = mainUI;
 		this.cTable = t;
 	}
 

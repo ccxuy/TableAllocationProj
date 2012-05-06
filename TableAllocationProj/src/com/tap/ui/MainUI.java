@@ -82,7 +82,9 @@ import com.tap.usersys.Operator;
 
 public class MainUI {
 
+	MainUI mainUI;
 	RibbonShell shell = null;
+	TableView tableView = TableView.Init;
 	TableViewer tableViewer = null;
 	Table table = null;
 	TableCursor tCursor;
@@ -107,7 +109,13 @@ public class MainUI {
 	private OperatorLogic opLogic = new OperatorLogic();
 	private OrderLogic orderLogic = new OrderLogic();
 	
-    /**
+	
+    public MainUI() {
+		super();
+		mainUI = this;
+	}
+
+	/**
      * @param args
      */
     public void show() {
@@ -478,6 +486,20 @@ public class MainUI {
         //end Home tab
 	}
 
+	public void doRefreshCurrentTableView() {
+		if(tableView.equals(TableView.Order)){
+			refreshOrderView();
+		}else if(tableView.equals(TableView.Book)){
+			refreshBookView();
+		}else if(tableView.equals(TableView.Staff)){
+			refreshStaffView();
+		}else if(tableView.equals(TableView.Table)){
+			refreshTableView();
+		}else if(tableView.equals(TableView.Waiting)){
+			refreshWaitingView();
+		}
+	}
+
 	private void doRefreshFunctionsInUI(){
 		doCleanUserLoginInfo();
 		//System.out.println("login?"+this.opLogic.isLogined());
@@ -587,24 +609,8 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Order","ID","Operator","Table ID","Guest ID","Guest amount"});
-			List<Order> orderList = orderLogic.getOrdersOfResturant();
-			if(null!=orderList){
-				for(Order order:orderList){
-					String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
-							,order.getTable().getId(),order.getGusets().getId()
-							,order.getGusets().getAmountString()};
-					doGenerateTableItem(row);
-					/*for(String s: row)
-						System.out.print(s);
-					System.out.println();*/
-				}
-				doAddModifyBoxDCListenerToTable("Order");
-			}
-			
-			computeFormSizeForItem(shell.getShell());
-			doFuckingRefresh();
+			refreshOrderView();
+			tableView = TableView.Order;
 		}
 	}
 	class btBookingViewListener implements SelectionListener{
@@ -612,23 +618,8 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Book Order","ID","Operator","Table ID","Guest ID","Guest amout","Book time"});
-			List<BookOrder> orderList = orderLogic.getBookOrdersOfResturant();
-			if(null!=orderList){
-				for(BookOrder order:orderList){
-					String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
-							,order.getTable().getId(),order.getGusets().getId()
-							,order.getGusets().getAmountString(),order.getBookTime().toString()};
-					doGenerateTableItem(row);
-					/*for(String s: row)
-						System.out.print(s);
-					System.out.println();*/
-				}
-				doAddModifyBoxDCListenerToTable("Book Order");
-			}
-			computeFormSizeForItem(shell.getShell());
-			doFuckingRefresh();
+			refreshBookView();
+			tableView = TableView.Book;
 		}
 	}
 	class btWaitingViewListener implements SelectionListener{
@@ -637,9 +628,28 @@ public class MainUI {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			refreshWaitingView();
+			tableView = TableView.Waiting;
 		}
 	}
-	void refreshWaitingView() {
+	class btTableViewListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			refreshTableView();
+			tableView = TableView.Table;
+		}
+	}
+	class btStaffViewListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			refreshStaffView();
+			tableView = TableView.Staff;
+		}
+	}
+	private void refreshWaitingView() {
 		doGenerateNewTableView(shell.getShell());
 		doGenerateTableColumn(new String[]{"Waiting guest","ID","guest amount","allow to seat alone","addtional infomation"});
 		WaitingList re = orderLogic.getWaitingListOfResturant();
@@ -657,64 +667,89 @@ public class MainUI {
 		computeFormSizeForItem(shell.getShell());
 		doFuckingRefresh();
 	}
-	class btTableViewListener implements SelectionListener{
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {}
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Table","ID","capacity"});
-			List<com.tap.tableordersys.Table> re = orderLogic.getTablesOfResturant();
-			if(null!=re){
-				for(com.tap.tableordersys.Table op:re){
-					String[] row = new String[]{"",op.getId(),op.getCapacityString()};
-					doGenerateTableItem(row);
-					/*for(String s: row)
-						System.out.print(s);
-					System.out.println();*/
-				}
-				doAddModifyBoxDCListenerToTable("Table");
+
+	private void refreshOrderView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Order","ID","Operator","Table ID","Guest ID","Guest amount"});
+		List<Order> orderList = orderLogic.getOrdersOfResturant();
+		if(null!=orderList){
+			for(Order order:orderList){
+				String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
+						,order.getTable().getId(),order.getGusets().getId()
+						,order.getGusets().getAmountString()};
+				doGenerateTableItem(row);
+				/*for(String s: row)
+					System.out.print(s);
+				System.out.println();*/
 			}
-			computeFormSizeForItem(shell.getShell());
-			doFuckingRefresh();
+			doAddModifyBoxDCListenerToTable("Order");
 		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
 	}
-	class btStaffViewListener implements SelectionListener{
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {}
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			doGenerateNewTableView(shell.getShell());
-			doGenerateTableColumn(new String[]{"Member","ID","Position"});
-			List<Operator> opList = opLogic.getAllOperator();
-			if(null!=opList){
-				for(Operator op:opList){
-					String[] row = new String[]{"",op.getId(),op.getPosition()};
-					doGenerateTableItem(row);
-					/*for(String s: row)
-						System.out.print(s);
-					System.out.println();*/
-				}
-				doAddModifyBoxDCListenerToTable("Staff");
+
+	private void refreshBookView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Book Order","ID","Operator","Table ID","Guest ID","Guest amout","Book time"});
+		List<BookOrder> orderList = orderLogic.getBookOrdersOfResturant();
+		if(null!=orderList){
+			for(BookOrder order:orderList){
+				String[] row = new String[]{"",order.getOrderID(),order.getOperatorID()
+						,order.getTable().getId(),order.getGusets().getId()
+						,order.getGusets().getAmountString(),order.getBookTime().toString()};
+				doGenerateTableItem(row);
+				/*for(String s: row)
+					System.out.print(s);
+				System.out.println();*/
 			}
-			computeFormSizeForItem(shell.getShell());
-			doFuckingRefresh();
+			doAddModifyBoxDCListenerToTable("Book Order");
 		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
 	}
-	class btAddCustomerListener implements SelectionListener{
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {}
-		@Override
-		public void widgetSelected(SelectionEvent arg0) {
-			
+
+	private void refreshTableView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Table","ID","capacity"});
+		List<com.tap.tableordersys.Table> re = orderLogic.getTablesOfResturant();
+		if(null!=re){
+			for(com.tap.tableordersys.Table op:re){
+				String[] row = new String[]{"",op.getId(),op.getCapacityString()};
+				doGenerateTableItem(row);
+				/*for(String s: row)
+					System.out.print(s);
+				System.out.println();*/
+			}
+			doAddModifyBoxDCListenerToTable("Table");
 		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
 	}
+
+	private void refreshStaffView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Member","ID","Position"});
+		List<Operator> opList = opLogic.getAllOperator();
+		if(null!=opList){
+			for(Operator op:opList){
+				String[] row = new String[]{"",op.getId(),op.getPosition()};
+				doGenerateTableItem(row);
+				/*for(String s: row)
+					System.out.print(s);
+				System.out.println();*/
+			}
+			doAddModifyBoxDCListenerToTable("Staff");
+		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
+	}
+
 	class btNewCustomerListener implements SelectionListener{
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			NewCustomerBox ntd = new NewCustomerBox(orderLogic);
+			NewCustomerBox ntd = new NewCustomerBox(mainUI,orderLogic);
 			ntd.open();
 		}
 	}
@@ -723,7 +758,7 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			NewBookingBox ntd = new NewBookingBox(orderLogic);
+			NewBookingBox ntd = new NewBookingBox(mainUI, orderLogic);
 			ntd.open();
 		}
 	}
@@ -732,7 +767,7 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			TableAddBox ntd = new TableAddBox(orderLogic);
+			TableAddBox ntd = new TableAddBox(mainUI, orderLogic);
 			ntd.open();
 		}
 	}
@@ -741,7 +776,7 @@ public class MainUI {
 		public void widgetDefaultSelected(SelectionEvent arg0) {}
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			NewBookingBox ntd = new NewBookingBox(orderLogic);
+			NewBookingBox ntd = new NewBookingBox(mainUI, orderLogic);
 			ntd.open();
 		}
 	}
@@ -763,7 +798,7 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			Order o = orderLogic.getRestaurant().findOrderByID(ti.getText(1));
-			OrderModifyBox ntd = new OrderModifyBox(o, orderLogic);
+			OrderModifyBox ntd = new OrderModifyBox(o, mainUI, orderLogic);
 			ntd.open();
 		}
 		@Override
@@ -776,7 +811,7 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			BookOrder bo = orderLogic.getRestaurant().findBookOrderByID(ti.getText(1));
-			BookOrderModifyBox ntd = new BookOrderModifyBox(bo, orderLogic);
+			BookOrderModifyBox ntd = new BookOrderModifyBox(bo, mainUI, orderLogic);
 			ntd.open();
 		}
 		@Override
@@ -802,7 +837,7 @@ public class MainUI {
 		public void mouseDoubleClick(MouseEvent e) {
 			TableItem ti = tCursor.getRow();
 			com.tap.tableordersys.Table bo = orderLogic.getRestaurant().findTableByID(ti.getText(1));
-			TableModifyBox ntd = new TableModifyBox(bo, orderLogic);
+			TableModifyBox ntd = new TableModifyBox(bo, mainUI, orderLogic);
 			ntd.open();
 		}
 		@Override
@@ -822,5 +857,22 @@ public class MainUI {
 		public void mouseDown(MouseEvent e) {}
 		@Override
 		public void mouseUp(MouseEvent e) {}
+	}
+	
+	enum TableView{
+		Init(0),
+		Order(1),
+		Book(2),
+		Waiting(3),
+		Table(4),
+		Staff(5);
+		
+		int state;
+		TableView(int state){
+			this.state = state;
+		}
+		public int getState() {
+			return state;
+		}
 	}
 }
