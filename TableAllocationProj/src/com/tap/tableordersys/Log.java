@@ -1,11 +1,13 @@
 package com.tap.tableordersys;
 
+import java.util.TimeZone;
+
 import hirondelle.date4j.DateTime;
 
 import com.tap.usersys.Operator;
 
 public class Log {
-	private Operator operator;
+	private String operatorID;
 	private DateTime time;
 	private String message;
 	
@@ -14,15 +16,18 @@ public class Log {
 	}
 	public Log(Operator operator, String message) {
 		super();
-		this.operator = operator;
+		this.time = DateTime.now(TimeZone.getDefault());
+		this.operatorID = operator.getId();
 		this.message = message;
 	}
 	
-	public Operator getOperator() {
-		return operator;
+	
+	
+	public String getOperatorID() {
+		return operatorID;
 	}
-	public void setOperator(Operator operator) {
-		this.operator = operator;
+	public void setOperatorID(String operatorID) {
+		this.operatorID = operatorID;
 	}
 	public DateTime getTime() {
 		return time;
@@ -38,7 +43,7 @@ public class Log {
 	}
 	@Override
 	public String toString() {
-		return "Log [operator=" + operator + ", time=" + time + ", message="
+		return "Log [operator=" + operatorID + ", time=" + time + ", message="
 				+ message + "]";
 	}
 	

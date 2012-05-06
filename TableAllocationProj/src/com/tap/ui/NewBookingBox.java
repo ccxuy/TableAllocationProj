@@ -179,6 +179,7 @@ public class NewBookingBox {
 				for(Order or:o){
 					msgContent.append(" "+or.getTable().getId());
 				}
+				orderLogic.addLog("Customer "+g.getId()+" booked table of "+msgContent);
 				msgBox.setMessage("Customer occupied table of "+msgContent);
 				msgBox.open();
 			}else{

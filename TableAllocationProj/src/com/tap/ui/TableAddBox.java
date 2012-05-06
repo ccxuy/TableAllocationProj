@@ -110,7 +110,7 @@ public class TableAddBox {
 				int change = orderLogic.getRestaurant().addTable(newTable);
 				orderLogic.saveResturant();
 				if(change==Status.SUCCESS.getValue()){
-					
+					orderLogic.addLog("New table "+newTable.getId()+", Capacity:"+newTable.getCapacity());
 				}else{
 					MessageBox msgBox = new MessageBox(shell, 1);
 					msgBox.setMessage("New table FAIL, dupicate ID!");

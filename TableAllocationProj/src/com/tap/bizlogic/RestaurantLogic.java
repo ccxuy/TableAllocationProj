@@ -37,7 +37,7 @@ public class RestaurantLogic {
 			List<Restaurant> oplist = db.queryByExample( new Restaurant(r.getName()) );
 			if(1==oplist.size()){
 				//throw new Exception("Database have dupilicate entities for login user!");
-				System.out.println("saved: "+r);
+				System.out.println("saveRestauant: "+r);
 				Restaurant restaurant = oplist.get(0);
 				restaurant.copy(r);
 				db.store(restaurant);

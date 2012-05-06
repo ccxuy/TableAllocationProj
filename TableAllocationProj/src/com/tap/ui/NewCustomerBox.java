@@ -135,6 +135,7 @@ public class NewCustomerBox {
 					for(Order or:o){
 						msgContent.append(" "+or.getTable().getId());
 					}
+					orderLogic.addLog("Customer "+newGuests.getId()+" occupied table of "+msgContent);
 					msgBox.setMessage("Customer occupied table of "+msgContent);
 					msgBox.open();
 				}else{

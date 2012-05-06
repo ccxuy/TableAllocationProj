@@ -183,6 +183,7 @@ public class BookOrderModifyBox {
 				saveOrder.getTable().deleteOrder(saveOrder);
 				saveOrder.setTable(modifyTable);
 				modifyTable.addOrder(saveOrder);
+				ol.addLog("Modify bookorder "+saveOrder);
 			}else{
 				MessageBox msgBox = new MessageBox(shell, 1);
 				msgBox.setMessage("This is not a BookOrder!!??");
@@ -210,6 +211,7 @@ public class BookOrderModifyBox {
 			BookOrder cOrder = (BookOrder) o;
 			cOrder.cancel();
 			change = cOrder.getTable().cancelBookOrder(cOrder);
+			ol.addLog("Cancel bookorder"+cOrder);
 			if( false == change ){
 				MessageBox msgBox = new MessageBox(shell, 1);
 				msgBox.setMessage("Error in cancel this book order");
@@ -237,6 +239,7 @@ public class BookOrderModifyBox {
 						cOrder.checkIn();
 						change = cOrder.getTable().deleteBookOrder(cOrder);
 						cOrder.getTable().addOrder(cOrder);
+						ol.addLog("Checkin bookorder"+cOrder);
 					}else{
 						MessageBox msgBox = new MessageBox(shell, 1);
 						msgBox.setMessage("Check in fail, only check in in booked time:"+cOrder.getBookTime()+"!");

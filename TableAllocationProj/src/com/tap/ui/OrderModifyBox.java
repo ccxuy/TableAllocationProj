@@ -32,7 +32,7 @@ public class OrderModifyBox {
 	
 	private MainUI mainUI;
 	private Order order;
-	private OrderLogic ol;
+	private OrderLogic orderLogic;
 	boolean modifyID=false;
 
 	protected Shell shell;
@@ -41,7 +41,7 @@ public class OrderModifyBox {
 	public OrderModifyBox(Order o,MainUI mainUI, OrderLogic ol) {
 		this.order = o;
 		this.mainUI = mainUI;
-		this.ol = ol;
+		this.orderLogic = ol;
 	}
 	public OrderModifyBox(boolean modifyID) {
 		this.modifyID = modifyID;
@@ -163,7 +163,7 @@ public class OrderModifyBox {
 	class btSaveListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Table modifyTable = ol.getRestaurant().findTableByID(textTableID.getText());
+			Table modifyTable = orderLogic.getRestaurant().findTableByID(textTableID.getText());
 			if(modifyTable==null){
 				MessageBox msgBox = new MessageBox(shell, 1);
 				msgBox.setMessage("No such Table!");
@@ -179,11 +179,13 @@ public class OrderModifyBox {
 				return;
 			}
 
+
+			orderLogic.addLog("order modified "+order);
 			order.getTable().deleteOrder(order);
 			order.setTable(modifyTable);
 			modifyTable.addOrder(order);
 			
-			ol.saveResturant();
+			orderLogic.saveResturant();
 			shell.close();
 			mainUI.doRefreshCurrentTableView();
 		}
@@ -193,7 +195,7 @@ public class OrderModifyBox {
 	class btCheckOutListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Order o = ol.getRestaurant().findOrderByID(textOrderID.getText());
+			Order o = orderLogic.getRestaurant().findOrderByID(textOrderID.getText());
 
 			int msgBoxResult=0;
 			if(null!=o){
@@ -202,15 +204,16 @@ public class OrderModifyBox {
 					change = o.getTable().deleteBookOrder(cOrder);
 				}else{*/
 					o.getTable().deleteOrder(o);
-					ol.saveResturant();
+					orderLogic.addLog("Checkout Order "+o);
+					orderLogic.saveResturant();
 					
 					//Assign table for customer in waiting
-					WaitingList waitlist = ol.getWaitList();
+					WaitingList waitlist = orderLogic.getWaitList();
 					List<Guests> guestWaitlist = waitlist.getGuestList();
 					Guests handleGuests = null;
 					boolean isAddedWaitCustomerToOrder = false;
 					for(Guests g:guestWaitlist){
-						List<Order> resOrder = ol.newCustomerFromWaiting(g);
+						List<Order> resOrder = orderLogic.newCustomerFromWaiting(g);
 						if(null!=resOrder){
 							MessageBox msgBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK);
 							StringBuffer msgContent = new StringBuffer();
@@ -220,6 +223,7 @@ public class OrderModifyBox {
 								}
 								handleGuests = g;
 								isAddedWaitCustomerToOrder = true;
+								orderLogic.addLog("[System]Add waiting customer "+g+" to "+msgContent);
 								msgBox.setMessage("Waiting Customer "+g.getId()+" occupied table of "+msgContent+", is that ok?");
 								msgBoxResult = msgBox.open();
 								break;
@@ -228,11 +232,11 @@ public class OrderModifyBox {
 					}
 					if(isAddedWaitCustomerToOrder)
 						guestWaitlist.remove(handleGuests);
-					ol.saveWaitingList();
+					orderLogic.saveWaitingList();
 				//}
 			}
 			//if(msgBoxResult==SWT.OK){
-				ol.saveResturant();
+				orderLogic.saveResturant();
 			/*}else{
 				ol.loadResturant();
 			}*/

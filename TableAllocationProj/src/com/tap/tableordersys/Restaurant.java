@@ -37,6 +37,15 @@ public class Restaurant{
 	public List<Log> getLog() {
 		return log;
 	}
+	
+	public void addLog(Log l) {
+		this.log.add(l);
+	}
+	
+	public void addLog(Operator operator,String message) {
+		Log l = new Log(operator, message);
+		this.log.add(l);
+	}
 
 	public void setLog(List<Log> log) {
 		this.log = log;
@@ -113,6 +122,7 @@ public class Restaurant{
 	 */
 	public void copy(Restaurant r){
 		this.tableList = r.tableList;
+		this.log = r.log;
 	}
 
 	@Override

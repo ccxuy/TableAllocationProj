@@ -75,6 +75,11 @@ public class OrderLogic {
 	public void setWaitList(WaitingList waitList) {
 		this.waitList = waitList;
 	}
+	
+	public void addLog(String message){
+		this.restaurant.addLog(operator, message);
+		this.saveResturant();
+	}
 
 	/**
 	 * 向固定饭店的某个restaurant 添加order

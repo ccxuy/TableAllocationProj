@@ -75,6 +75,7 @@ import com.tap.bizlogic.OperatorLogic;
 import com.tap.bizlogic.OrderLogic;
 import com.tap.tableordersys.BookOrder;
 import com.tap.tableordersys.Guests;
+import com.tap.tableordersys.Log;
 import com.tap.tableordersys.Order;
 import com.tap.tableordersys.Restaurant;
 import com.tap.tableordersys.WaitingList;
@@ -379,6 +380,7 @@ public class MainUI {
         rgHistory = new RibbonGroup(ftTable, "History");
         //new Image(null, "newOder.gif")
         RibbonButton rbHistoryView = new RibbonButton(rgHistory, ImageCache.getImage("olb_picture.gif"), "History View", RibbonButton.STYLE_NO_DEPRESS);
+        rbHistoryView.addSelectionListener(new btLogViewListener());
         //end Booking group
 	}
 
@@ -667,6 +669,15 @@ public class MainUI {
 			tableView = TableView.Staff;
 		}
 	}
+	class btLogViewListener implements SelectionListener{
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {}
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			refreshLogView();
+			tableView = TableView.Log;
+		}
+	}
 	private void refreshWaitingView() {
 		doGenerateNewTableView(shell.getShell());
 		doGenerateTableColumn(new String[]{"Waiting guest","ID","guest amount","allow to seat alone","addtional infomation"});
@@ -761,6 +772,20 @@ public class MainUI {
 		computeFormSizeForItem(shell.getShell());
 		doFuckingRefresh();
 	}
+	
+	private void refreshLogView() {
+		doGenerateNewTableView(shell.getShell());
+		doGenerateTableColumn(new String[]{"Log","Operator","Time","Message"});
+		List<Log> lList = orderLogic.getRestaurant().getLog();
+		if(null!=lList){
+			for(Log l:lList){
+				String[] row = new String[]{"",l.getTime().toString(),l.getOperatorID(),l.getMessage()};
+				doGenerateTableItem(row);
+			}
+		}
+		computeFormSizeForItem(shell.getShell());
+		doFuckingRefresh();
+	}
 
 	class btNewCustomerListener implements SelectionListener{
 		@Override
@@ -788,6 +813,7 @@ public class MainUI {
 			for(com.tap.tableordersys.Table t:orderLogic.getRestaurant().getTableList()){
 				t.getBookOrderList().clear();
 			}
+			orderLogic.addLog("Empty Booking List");
 			orderLogic.saveResturant();
 			refreshBookView();
 		}
@@ -826,6 +852,7 @@ public class MainUI {
 		public void widgetSelected(SelectionEvent arg0) {
 			orderLogic.getWaitList().getGuestList().clear();
 			orderLogic.saveWaitingList();
+			orderLogic.addLog("Empty Wating List");
 			refreshWaitingView();
 		}
 	}
@@ -904,7 +931,8 @@ public class MainUI {
 		Book(2),
 		Waiting(3),
 		Table(4),
-		Staff(5);
+		Staff(5),
+		Log(6);
 		
 		int state;
 		TableView(int state){

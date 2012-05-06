@@ -72,9 +72,9 @@ public class BookOrder extends Order {
 	 
 	public boolean isOutOfTime() {
 		DateTime obsoleteTime = DateTime.now(TimeZone.getDefault());
-		obsoleteTime = obsoleteTime.plus(0, 0, 0, 0, Setting.obsoleteMinitesOfBookOrder, 0
+		obsoleteTime = obsoleteTime.minus(0, 0, 0, 0, Setting.obsoleteMinitesOfBookOrder, 0
 				, DayOverflow.Spillover);
-		if( 0<obsoleteTime.compareTo(bookTime)){
+		if( obsoleteTime.compareTo(bookTime)>0 ){
 			return true;
 		}
 		return false;
