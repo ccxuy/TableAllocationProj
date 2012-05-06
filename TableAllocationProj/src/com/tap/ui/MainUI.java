@@ -250,8 +250,8 @@ public class MainUI {
 	private void doGenerateTableOfTest(final Shell shell) {
 		doGenerateNewTableView(shell);
 
-		doGenerateTableColumn(new String[]{"id","order"});
-		doGenerateTableItem(new String[]{"id1","order2"});
+		doGenerateTableColumn(new String[]{""});
+		doGenerateTableItem(new String[]{""});
 	}
 
 	private void doGenerateNewTableView(final Shell shell) {
