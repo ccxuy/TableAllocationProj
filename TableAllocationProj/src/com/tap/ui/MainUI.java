@@ -134,7 +134,7 @@ public class MainUI {
         shell.setButtonImage(ImageCache.getImage("desk_32x32.ico"));
         //Shell shell = new Shell(display);
         
-        shell.setText("Table Allocation Prgram");
+        shell.setText("Table Allocation Program : "+orderLogic.getRestaurant().getName());
         shell.setSize(800, 500);
         
         msgBox = new MessageBox(shell.getShell());
@@ -251,8 +251,12 @@ public class MainUI {
 	private void doGenerateTableOfTest(final Shell shell) {
 		doGenerateNewTableView(shell);
 
-		doGenerateTableColumn(new String[]{""});
-		doGenerateTableItem(new String[]{""});
+		Restaurant r = orderLogic.getRestaurant();
+		doGenerateTableColumn(new String[]{"","Resturant name","Table amount","Order Amount","Book order Amount"});
+		doGenerateTableItem(new String[]{"",r.getName()
+				,new Integer(r.getTableList().size()).toString()
+				,new Integer(r.getOrderAmount()).toString()
+				,new Integer(r.getBookOrderAmount()).toString()});
 	}
 
 	private void doGenerateNewTableView(final Shell shell) {

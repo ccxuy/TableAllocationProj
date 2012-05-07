@@ -116,6 +116,21 @@ public class Restaurant{
 		return null;
 	}
 	
+	public int getOrderAmount(){
+		int count = 0;
+		for(Table t:this.tableList){
+			count+=t.getOrderList().size();
+		}
+		return count;
+	}
+	public int getBookOrderAmount(){
+		int count = 0;
+		for(Table t:this.tableList){
+			count+=t.getBookOrderList().size();
+		}
+		return count;
+	}
+	
 	/**
 	 * copy except name
 	 * @param r
