@@ -145,12 +145,12 @@ public class OrderModifyBox {
 		}
 
 		Button btnSave = new Button(shell, SWT.NONE);
-		btnSave.setBounds(33, 232, 80, 27);
+		btnSave.setBounds(46, 250, 80, 27);
 		btnSave.setText("Save");
 		btnSave.addSelectionListener(new btSaveListener());
 		
 		Button btnDelete = new Button(shell, SWT.NONE);
-		btnDelete.setBounds(141, 232, 80, 27);
+		btnDelete.setBounds(154, 250, 80, 27);
 		btnDelete.setText("Check out");
 		btnDelete.addSelectionListener(new btCheckOutListener());
 		

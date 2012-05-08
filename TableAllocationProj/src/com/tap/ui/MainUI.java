@@ -779,7 +779,7 @@ public class MainUI {
 	
 	private void refreshLogView() {
 		doGenerateNewTableView(shell.getShell());
-		doGenerateTableColumn(new String[]{"Log","Operator","Time","Message"});
+		doGenerateTableColumn(new String[]{"Log","Time","Operator","Message"});
 		List<Log> lList = orderLogic.getRestaurant().getLog();
 		if(null!=lList){
 			for(Log l:lList){

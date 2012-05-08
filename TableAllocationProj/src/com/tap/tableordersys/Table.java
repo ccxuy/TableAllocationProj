@@ -127,10 +127,11 @@ public class Table {
 	public int countGuestNumberInTable(){
 		int num = 0;
 		for(Order o:this.orderList){
-			if( Status.ORDER_STATE_ORDERD.getValue()==o.getState() ){
-				num+=o.getGusetNumber();
-			}
+			//if( Status.ORDER_STATE_ORDERD.getValue()==o.getState() ){
+				num=num+o.getGusetNumber();
+			//}
 		}
+		System.out.println("countGuestNumberInTable "+num);
 		return num;
 	}
 	public void setCapacity(int capacity) {
