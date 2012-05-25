@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.observable_1.3.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.observable.source_1.3.0.I20100601-0800.jar"/>
 	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.property_1.3.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.core.databinding.property.source_1.3.0.I20100601-0800.jar"/>
 	<classpathentry kind="lib" path="D:/Program Files/eclipse/plugins/org.eclipse.jface.databinding_1.4.0.I20100601-0800.jar" sourcepath="D:/Program Files/eclipse/plugins/org.eclipse.jface.databinding.source_1.4.0.I20100601-0800.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

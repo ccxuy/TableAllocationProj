@@ -363,7 +363,10 @@ public class OrderLogic {
 			db.close();
 		}
 	}
-
+	public void emptyWaitingList(){
+		waitList.getGuestList().clear();
+		saveWaitingList();
+	}
 	public List<Order> getOrdersOfResturant(){
 		return getOrdersOfResturant(this.restaurant.getName());
 	}
